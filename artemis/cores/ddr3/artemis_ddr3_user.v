@@ -124,7 +124,5 @@ module artemis_ddr3_user (
   output  [6:0]   p3_rd_count,
   output          p3_rd_overflow,
   output          p3_rd_error
-
-
 );
 endmodule
