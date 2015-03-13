@@ -1,6 +1,6 @@
 
-module artemis_ddr3_user (
-  input           ddr3_in_clk,
+module artemis_ddr3 (
+  input           clk_100mhz,
   input           rst,
 
   output          calibration_done,
@@ -125,4 +125,5 @@ module artemis_ddr3_user (
   output          p3_rd_overflow,
   output          p3_rd_error
 );
+
 endmodule
