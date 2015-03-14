@@ -22,7 +22,6 @@ SOFTWARE.
 */
 
 `timescale 1 ns/1 ps
-`include "sdram_include.v"
 
 
 module ddr3_controller (
@@ -35,7 +34,7 @@ input                       calibration_done,
 input         [27:0]        address,
 input                       write_en, //set high to initiate a write transaction
                                       //this will not finish until everything in the PPFIFO is empty
-output                      read_en,  //set high to start populating the read FIFO, set low to end immediately
+input                       read_en,  //set high to start populating the read FIFO, set low to end immediately
 
 //PPFIFO Interface
 input                       if_write_strobe,
@@ -107,6 +106,7 @@ reg                 if_read_strobe;
 wire                if_read_ready;
 reg                 if_read_activate;
 wire        [23:0]  if_read_size;
+wire        [31:0]  if_read_data;
 wire                if_inactive;
 
 reg         [23:0]  if_read_count;
@@ -130,8 +130,8 @@ reg         [31:0]  data;
 //Submodules
 //to_ddr3_fifo
 ppfifo#(
-  .DATA_WIDTH   (32),
-  .ADDRESS_WIDTH(6),
+  .DATA_WIDTH             (32                                        ),
+  .ADDRESS_WIDTH          (6                                         )
 )user_2_mem(
   .reset                  (rst || !calibration_done                  ),
 
@@ -198,19 +198,10 @@ always @ (posedge clk) begin
 
     wr_en             <=  0;  //Strobe data into the write FIFO
     wr_data           <=  0;  //Data to be sent into the wirte FIFO
-    wr_full           <=  0;  //Write FIFO is full
-    wr_empty          <=  0;  //Write FIFO is empty
-    wr_count          <=  0;  //Write Count
-    wr_underrun       <=  0;  //Write Underrun
-    wr_error          <=  0;  //Write Error
 
     rd_en             <=  0;  //Read Strobe
     rd_data           <=  0;  //Read Data
-    rd_full           <=  0;  //Read FIFO Full
     rd_empty          <=  0;  //Read FIFO Empty
-    rd_count          <=  0;  //Read FIFO Count
-    rd_overflow       <=  0;  //Read Overflow
-    rd_error          <=  0;  //Read Error
 
 
     if_read_strobe    <=  0;
@@ -249,10 +240,10 @@ always @ (posedge clk) begin
     if ((of_write_ready > 0) && (of_write_activate == 0)) begin
       of_write_count          <=  0;
       if (of_write_ready[0]) begin
-        if_write_activate[0]  <=  1;
+        of_write_activate[0]  <=  1;
       end
       else begin
-        if_write_activate[1]  <=  1;
+        of_write_activate[1]  <=  1;
       end
     end
 
@@ -322,7 +313,7 @@ always @ (posedge clk) begin
             cmd_instr           <=  CMD_READ_PC;
             cmd_bl              <=  6'h3F;
             cmd_word_addr       <=  local_address;
-            local_address       <=  local_address + 8'h040;;
+            local_address       <=  local_address + 28'h040;
             state               <=  READ_DATA;
         end
       end

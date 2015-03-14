@@ -48,7 +48,7 @@ SOFTWARE.
 `define OUTPUT_FILE "sim/master_output_test_data.txt"
 
 
-`define CLK_HALF_PERIOD 10
+`define CLK_HALF_PERIOD 5
 `define CLK_PERIOD (2 * `CLK_HALF_PERIOD)
 
 `define SLEEP_HALF_CLK #(`CLK_HALF_PERIOD)
@@ -148,94 +148,330 @@ reg               request_more_data_ack;
 reg     [27:0]    data_write_count;
 reg     [27:0]    data_read_count;
 
+wire          clk_100mhz;
+wire          calibration_done;
+
+wire          usr_clk;
+wire          usr_rst;
+
+wire [7:0]    mcb3_dram_dq;
+wire [13:0]   mcb3_dram_a;
+wire [2:0]    mcb3_dram_ba;
+wire          mcb3_dram_ras_n;
+wire          mcb3_dram_cas_n;
+wire          mcb3_dram_we_n;
+wire          mcb3_dram_odt;
+wire          mcb3_dram_reset_n;
+wire          mcb3_dram_cke;
+wire          mcb3_dram_dm;
+wire          mcb3_rzq;
+wire          mcb3_zio;
+wire          mcb3_dram_dqs;
+wire          mcb3_dram_dqs_n;
+wire          mcb3_dram_ck;
+wire          mcb3_dram_ck_n;
+
+wire          p0_cmd_clk;
+wire          p0_cmd_en;
+wire [2:0]    p0_cmd_instr;
+wire [5:0]    p0_cmd_bl;
+wire [29:0]   p0_cmd_byte_addr;
+wire          p0_cmd_empty;
+wire          p0_cmd_full;
+wire          p0_wr_clk;
+wire          p0_wr_en;
+wire [3:0]    p0_wr_mask;
+wire [31:0]   p0_wr_data;
+wire          p0_wr_full;
+wire          p0_wr_empty;
+wire [6:0]    p0_wr_count;
+wire          p0_wr_underrun;
+wire          p0_wr_error;
+wire          p0_rd_clk;
+wire          p0_rd_en;
+wire [31:0]   p0_rd_data;
+wire          p0_rd_full;
+wire          p0_rd_empty;
+wire [6:0]    p0_rd_count;
+wire          p0_rd_overflow;
+wire          p0_rd_error;
+
+wire          p1_cmd_clk;
+wire          p1_cmd_en;
+wire [2:0]    p1_cmd_instr;
+wire [5:0]    p1_cmd_bl;
+wire [29:0]   p1_cmd_byte_addr;
+wire          p1_cmd_empty;
+wire          p1_cmd_full;
+wire          p1_wr_clk;
+wire          p1_wr_en;
+wire [3:0]    p1_wr_mask;
+wire [31:0]   p1_wr_data;
+wire          p1_wr_full;
+wire          p1_wr_empty;
+wire [6:0]    p1_wr_count;
+wire          p1_wr_underrun;
+wire          p1_wr_error;
+wire          p1_rd_clk;
+wire          p1_rd_en;
+wire [31:0]   p1_rd_data;
+wire          p1_rd_full;
+wire          p1_rd_empty;
+wire [6:0]    p1_rd_count;
+wire          p1_rd_overflow;
+wire          p1_rd_error;
+
+wire          p2_cmd_clk;
+wire          p2_cmd_en;
+wire [2:0]    p2_cmd_instr;
+wire [5:0]    p2_cmd_bl;
+wire [29:0]   p2_cmd_byte_addr;
+wire          p2_cmd_empty;
+wire          p2_cmd_full;
+wire          p2_wr_clk;
+wire          p2_wr_en;
+wire [3:0]    p2_wr_mask;
+wire [31:0]   p2_wr_data;
+wire          p2_wr_full;
+wire          p2_wr_empty;
+wire [6:0]    p2_wr_count;
+wire          p2_wr_underrun;
+wire          p2_wr_error;
+wire          p2_rd_clk;
+wire          p2_rd_en;
+wire [31:0]   p2_rd_data;
+wire          p2_rd_full;
+wire          p2_rd_empty;
+wire [6:0]    p2_rd_count;
+wire          p2_rd_overflow;
+wire          p2_rd_error;
+
+
+
 //Submodules
 wishbone_master wm (
-  .clk            (clk              ),
-  .rst            (rst              ),
+  .clk               (clk               ),
+  .rst               (rst               ),
 
-  .i_ih_rst       (r_ih_reset       ),
-  .i_ready        (r_in_ready       ),
-  .i_command      (r_in_command     ),
-  .i_address      (r_in_address     ),
-  .i_data         (r_in_data        ),
-  .i_data_count   (r_in_data_count  ),
-  .i_out_ready    (r_out_ready      ),
-  .o_en           (w_out_en         ),
-  .o_status       (w_out_status     ),
-  .o_address      (w_out_address    ),
-  .o_data         (w_out_data       ),
-  .o_data_count   (w_out_data_count ),
-  .o_master_ready (w_master_ready   ),
+  .i_ih_rst          (r_ih_reset        ),
+  .i_ready           (r_in_ready        ),
+  .i_command         (r_in_command      ),
+  .i_address         (r_in_address      ),
+  .i_data            (r_in_data         ),
+  .i_data_count      (r_in_data_count   ),
+  .i_out_ready       (r_out_ready       ),
+  .o_en              (w_out_en          ),
+  .o_status          (w_out_status      ),
+  .o_address         (w_out_address     ),
+  .o_data            (w_out_data        ),
+  .o_data_count      (w_out_data_count  ),
+  .o_master_ready    (w_master_ready    ),
 
-  .o_per_we        (w_wbm_we        ),
-  .o_per_adr       (w_wbm_adr       ),
-  .o_per_dat       (w_wbm_dat_i     ),
-  .i_per_dat       (w_wbm_dat_o     ),
-  .o_per_stb       (w_wbm_stb       ),
-  .o_per_cyc       (w_wbm_cyc       ),
-  .o_per_msk       (w_wbm_msk       ),
-  .o_per_sel       (w_wbm_sel       ),
-  .i_per_ack       (w_wbm_ack       ),
-  .i_per_int       (w_wbm_int       )
+  .o_per_we          (w_wbm_we          ),
+  .o_per_adr         (w_wbm_adr         ),
+  .o_per_dat         (w_wbm_dat_i       ),
+  .i_per_dat         (w_wbm_dat_o       ),
+  .o_per_stb         (w_wbm_stb         ),
+  .o_per_cyc         (w_wbm_cyc         ),
+  .o_per_msk         (w_wbm_msk         ),
+  .o_per_sel         (w_wbm_sel         ),
+  .i_per_ack         (w_wbm_ack         ),
+  .i_per_int         (w_wbm_int         )
 );
 
+
 //slave 1
-wb_ddr3 s1 (
+wb_artemis_ddr3 s1(
+  .clk               (clk               ),
+  .rst               (rst               ),
 
-  .clk        (clk                  ),
-  .rst        (rst                  ),
+  .clk_100mhz        (clk_100mhz        ),
+  .calibration_done  (calibration_done  ),
 
-  .i_wbs_we   (w_wbs1_we            ),
-  .i_wbs_cyc  (w_wbs1_cyc           ),
-  .i_wbs_dat  (w_wbs1_dat_i         ),
-  .i_wbs_stb  (w_wbs1_stb           ),
-  .o_wbs_ack  (w_wbs1_ack           ),
-  .o_wbs_dat  (w_wbs1_dat_o         ),
-  .i_wbs_adr  (w_wbs1_adr           ),
-  .o_wbs_int  (w_wbs1_int           )
+  .usr_clk           (usr_clk           ),
+  .usr_rst           (usr_rst           ),
+
+  .mcb3_dram_dq      (mcb3_dram_dq      ),
+  .mcb3_dram_a       (mcb3_dram_a       ),
+  .mcb3_dram_ba      (mcb3_dram_ba      ),
+  .mcb3_dram_ras_n   (mcb3_dram_ras_n   ),
+  .mcb3_dram_cas_n   (mcb3_dram_cas_n   ),
+  .mcb3_dram_we_n    (mcb3_dram_we_n    ),
+  .mcb3_dram_odt     (mcb3_dram_odt     ),
+  .mcb3_dram_reset_n (mcb3_dram_reset_n ),
+  .mcb3_dram_cke     (mcb3_dram_cke     ),
+  .mcb3_dram_dm      (mcb3_dram_dm      ),
+  .mcb3_rzq          (mcb3_rzq          ),
+  .mcb3_zio          (mcb3_zio          ),
+  .mcb3_dram_dqs     (mcb3_dram_dqs     ),
+  .mcb3_dram_dqs_n   (mcb3_dram_dqs_n   ),
+  .mcb3_dram_ck      (mcb3_dram_ck      ),
+  .mcb3_dram_ck_n    (mcb3_dram_ck_n    ),
+
+  .p0_cmd_clk        (p0_cmd_clk        ),
+  .p0_cmd_en         (p0_cmd_en         ),
+  .p0_cmd_instr      (p0_cmd_instr      ),
+  .p0_cmd_bl         (p0_cmd_bl         ),
+  .p0_cmd_byte_addr  (p0_cmd_byte_addr  ),
+  .p0_cmd_empty      (p0_cmd_empty      ),
+  .p0_cmd_full       (p0_cmd_full       ),
+  .p0_wr_clk         (p0_wr_clk         ),
+  .p0_wr_en          (p0_wr_en          ),
+  .p0_wr_mask        (p0_wr_mask        ),
+  .p0_wr_data        (p0_wr_data        ),
+  .p0_wr_full        (p0_wr_full        ),
+  .p0_wr_empty       (p0_wr_empty       ),
+  .p0_wr_count       (p0_wr_count       ),
+  .p0_wr_underrun    (p0_wr_underrun    ),
+  .p0_wr_error       (p0_wr_error       ),
+  .p0_rd_clk         (p0_rd_clk         ),
+  .p0_rd_en          (p0_rd_en          ),
+  .p0_rd_data        (p0_rd_data        ),
+  .p0_rd_full        (p0_rd_full        ),
+  .p0_rd_empty       (p0_rd_empty       ),
+  .p0_rd_count       (p0_rd_count       ),
+  .p0_rd_overflow    (p0_rd_overflow    ),
+  .p0_rd_error       (p0_rd_error       ),
+
+  .p1_cmd_clk        (p1_cmd_clk        ),
+  .p1_cmd_en         (p1_cmd_en         ),
+  .p1_cmd_instr      (p1_cmd_instr      ),
+  .p1_cmd_bl         (p1_cmd_bl         ),
+  .p1_cmd_byte_addr  (p1_cmd_byte_addr  ),
+  .p1_cmd_empty      (p1_cmd_empty      ),
+  .p1_cmd_full       (p1_cmd_full       ),
+  .p1_wr_clk         (p1_wr_clk         ),
+  .p1_wr_en          (p1_wr_en          ),
+  .p1_wr_mask        (p1_wr_mask        ),
+  .p1_wr_data        (p1_wr_data        ),
+  .p1_wr_full        (p1_wr_full        ),
+  .p1_wr_empty       (p1_wr_empty       ),
+  .p1_wr_count       (p1_wr_count       ),
+  .p1_wr_underrun    (p1_wr_underrun    ),
+  .p1_wr_error       (p1_wr_error       ),
+  .p1_rd_clk         (p1_rd_clk         ),
+  .p1_rd_en          (p1_rd_en          ),
+  .p1_rd_data        (p1_rd_data        ),
+  .p1_rd_full        (p1_rd_full        ),
+  .p1_rd_empty       (p1_rd_empty       ),
+  .p1_rd_count       (p1_rd_count       ),
+  .p1_rd_overflow    (p1_rd_overflow    ),
+  .p1_rd_error       (p1_rd_error       ),
+
+  .p2_cmd_clk        (p2_cmd_clk        ),
+  .p2_cmd_en         (p2_cmd_en         ),
+  .p2_cmd_instr      (p2_cmd_instr      ),
+  .p2_cmd_bl         (p2_cmd_bl         ),
+  .p2_cmd_byte_addr  (p2_cmd_byte_addr  ),
+  .p2_cmd_empty      (p2_cmd_empty      ),
+  .p2_cmd_full       (p2_cmd_full       ),
+  .p2_wr_clk         (p2_wr_clk         ),
+  .p2_wr_en          (p2_wr_en          ),
+  .p2_wr_mask        (p2_wr_mask        ),
+  .p2_wr_data        (p2_wr_data        ),
+  .p2_wr_full        (p2_wr_full        ),
+  .p2_wr_empty       (p2_wr_empty       ),
+  .p2_wr_count       (p2_wr_count       ),
+  .p2_wr_underrun    (p2_wr_underrun    ),
+  .p2_wr_error       (p2_wr_error       ),
+  .p2_rd_clk         (p2_rd_clk         ),
+  .p2_rd_en          (p2_rd_en          ),
+  .p2_rd_data        (p2_rd_data        ),
+  .p2_rd_full        (p2_rd_full        ),
+  .p2_rd_empty       (p2_rd_empty       ),
+  .p2_rd_count       (p2_rd_count       ),
+  .p2_rd_overflow    (p2_rd_overflow    ),
+  .p2_rd_error       (p2_rd_error       ),
+
+  .i_wbs_we          (w_wbs1_we         ),
+  .i_wbs_cyc         (w_wbs1_cyc        ),
+  .i_wbs_sel         (w_wbs1_sel        ),
+  .i_wbs_dat         (w_wbs1_dat_i      ),
+  .i_wbs_stb         (w_wbs1_stb        ),
+  .o_wbs_ack         (w_wbs1_ack        ),
+  .o_wbs_dat         (w_wbs1_dat_o      ),
+  .i_wbs_adr         (w_wbs1_adr        ),
+
+  .o_wbs_int         (w_wbs1_int        )
 );
 
 wishbone_interconnect wi (
-  .clk        (clk                  ),
-  .rst        (rst                  ),
+  .clk               (clk               ),
+  .rst               (rst               ),
 
-  .i_m_we     (w_wbm_we             ),
-  .i_m_cyc    (w_wbm_cyc            ),
-  .i_m_stb    (w_wbm_stb            ),
-  .o_m_ack    (w_wbm_ack            ),
-  .i_m_dat    (w_wbm_dat_i          ),
-  .o_m_dat    (w_wbm_dat_o          ),
-  .i_m_adr    (w_wbm_adr            ),
-  .o_m_int    (w_wbm_int            ),
+  .i_m_we            (w_wbm_we          ),
+  .i_m_cyc           (w_wbm_cyc         ),
+  .i_m_stb           (w_wbm_stb         ),
+  .o_m_ack           (w_wbm_ack         ),
+  .i_m_dat           (w_wbm_dat_i       ),
+  .o_m_dat           (w_wbm_dat_o       ),
+  .i_m_adr           (w_wbm_adr         ),
+  .o_m_int           (w_wbm_int         ),
 
-  .o_s0_we    (w_wbs0_we            ),
-  .o_s0_cyc   (w_wbs0_cyc           ),
-  .o_s0_stb   (w_wbs0_stb           ),
-  .i_s0_ack   (w_wbs0_ack           ),
-  .o_s0_dat   (w_wbs0_dat_i         ),
-  .i_s0_dat   (w_wbs0_dat_o         ),
-  .o_s0_adr   (w_wbs0_adr           ),
-  .i_s0_int   (w_wbs0_int           ),
+  .o_s0_we           (w_wbs0_we         ),
+  .o_s0_cyc          (w_wbs0_cyc        ),
+  .o_s0_stb          (w_wbs0_stb        ),
+  .i_s0_ack          (w_wbs0_ack        ),
+  .o_s0_dat          (w_wbs0_dat_i      ),
+  .i_s0_dat          (w_wbs0_dat_o      ),
+  .o_s0_adr          (w_wbs0_adr        ),
+  .i_s0_int          (w_wbs0_int        ),
 
-  .o_s1_we    (w_wbs1_we            ),
-  .o_s1_cyc   (w_wbs1_cyc           ),
-  .o_s1_stb   (w_wbs1_stb           ),
-  .i_s1_ack   (w_wbs1_ack           ),
-  .o_s1_dat   (w_wbs1_dat_i         ),
-  .i_s1_dat   (w_wbs1_dat_o         ),
-  .o_s1_adr   (w_wbs1_adr           ),
-  .i_s1_int   (w_wbs1_int           )
+  .o_s1_we           (w_wbs1_we         ),
+  .o_s1_cyc          (w_wbs1_cyc        ),
+  .o_s1_stb          (w_wbs1_stb        ),
+  .i_s1_ack          (w_wbs1_ack        ),
+  .o_s1_dat          (w_wbs1_dat_i      ),
+  .i_s1_dat          (w_wbs1_dat_o      ),
+  .o_s1_adr          (w_wbs1_adr        ),
+  .i_s1_int          (w_wbs1_int        )
 );
-
-
-
-
 
 assign  w_wbs0_ack              = 0;
 assign  w_wbs0_dat_o            = 0;
 assign  start                   = 1;
 
-always #`CLK_HALF_PERIOD        clk = ~clk;
+always #`CLK_HALF_PERIOD    clk = ~clk;
+assign  clk_100mhz              = clk;
+
+assign p0_cmd_clk               = clk;
+assign p0_cmd_en                = 0;
+assign p0_cmd_instr             = 0;
+assign p0_cmd_bl                = 0;
+assign p0_cmd_byte_addr         = 0;
+assign p0_wr_clk                = clk;
+assign p0_wr_en                 = 0;
+assign p0_wr_mask               = 0;
+assign p0_wr_data               = 0;
+assign p0_rd_clk                = clk;
+assign p0_rd_en                 = 0;
+assign p0_rd_data               = 0;
+
+assign p1_cmd_clk               = clk;
+assign p1_cmd_en                = 0;
+assign p1_cmd_instr             = 0;
+assign p1_cmd_bl                = 0;
+assign p1_cmd_byte_addr         = 0;
+assign p1_wr_clk                = clk;
+assign p1_wr_en                 = 0;
+assign p1_wr_mask               = 0;
+assign p1_wr_data               = 0;
+assign p1_rd_clk                = clk;
+assign p1_rd_en                 = 0;
+assign p1_rd_data               = 0;
+
+assign p2_cmd_clk               = clk;
+assign p2_cmd_en                = 0;
+assign p2_cmd_instr             = 0;
+assign p2_cmd_bl                = 0;
+assign p2_cmd_byte_addr         = 0;
+assign p2_wr_clk                = clk;
+assign p2_wr_en                 = 0;
+assign p2_wr_mask               = 0;
+assign p2_wr_data               = 0;
+assign p2_rd_clk                = clk;
+assign p2_rd_en                 = 0;
+assign p2_rd_data               = 0;
 
 initial begin
   fd_out                        = 0;
