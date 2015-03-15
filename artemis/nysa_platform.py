@@ -28,9 +28,6 @@ import sys
 import os
 
 from nysa.host.nysa_platform import Platform
-import usb.core
-import usb.util
-from pyftdi.pyftdi.ftdi import Ftdi
 
 sys.path.append(os.path.join(os.path.dirname(__file__),
                              os.pardir,
@@ -38,36 +35,20 @@ sys.path.append(os.path.join(os.path.dirname(__file__),
 
 
 import nysa
-from nysa.ibuilder.lib.xilinx_utils import find_xilinx_path
 from artemis import Artemis
 
 class ArtemisPlatform(Platform):
 
     def __init__(self, status = None):
         super (ArtemisPlatform, self).__init__(status)
-        self.vendor = 0x0403
-        self.product = 0x8531
 
     def get_type(self):
         return "Artemis"
 
     def scan(self):
-        #print ("Scanning...")
         self.status.Verbose("Scanning")
-        devices = usb.core.find(find_all = True)
-        for device in devices:
-            if device.idVendor == self.vendor and device.idProduct == self.product:
-                #sernum = usb.util.get_string(device, 64, device.iSerialNumber)
-                #print "Found a Artemis Device: Serial Number: %s" % sernum
-
-                self.add_device_dict(device.serial_number, Artemis(idVendor = self.vendor, 
-                                                      idProduct = self.product,
-                                                      sernum = device.serial_number,
-                                                      status = self.status))
         return self.dev_dict
 
     def test_build_tools(self):
-        if find_xilinx_path() is None:
-            return False
         return True
 
