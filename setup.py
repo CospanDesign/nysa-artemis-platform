@@ -25,8 +25,7 @@ setup(
     url="http://artemis.cospandesign.com",
     package_data={'' : ["*.json", "*.png", "*.ucf"]},
     install_requires = [
-        "nysa",
-        "pyftdi"
+        "nysa"
     ],
     include_package_data = True,
     long_description=long_desc,
