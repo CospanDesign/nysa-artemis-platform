@@ -1,5 +1,5 @@
 include *.md
 include *.txt
-recursive-include dionysus *.json
-recursive-include dionysus *.ucf
-recursive-include dionysus *.png
+recursive-include artemis *.json
+recursive-include artemis *.ucf
+recursive-include artemis *.png
