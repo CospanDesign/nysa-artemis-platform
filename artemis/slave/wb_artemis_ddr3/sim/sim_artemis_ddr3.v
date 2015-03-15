@@ -128,22 +128,22 @@ module sim_artemis_ddr3 (
   input       [2:0]   p3_cmd_instr,
   input       [5:0]   p3_cmd_bl,
   input       [29:0]  p3_cmd_byte_addr,
-  output  reg         p3_cmd_empty,
-  output  reg         p3_cmd_full,
+  output              p3_cmd_empty,
+  output              p3_cmd_full,
   input               p3_wr_clk,
   input               p3_wr_en,
   input       [3:0]   p3_wr_mask,
   input       [31:0]  p3_wr_data,
-  output  reg         p3_wr_full,
-  output  reg         p3_wr_empty,
+  output              p3_wr_full,
+  output              p3_wr_empty,
   output  reg [6:0]   p3_wr_count,
   output  reg         p3_wr_underrun,
   output  reg         p3_wr_error,
   input               p3_rd_clk,
   input               p3_rd_en,
   output  reg [31:0]  p3_rd_data,
-  output  reg         p3_rd_full,
-  output  reg         p3_rd_empty,
+  output              p3_rd_full,
+  output              p3_rd_empty,
   output  reg [6:0]   p3_rd_count,
   output  reg         p3_rd_overflow,
   output  reg         p3_rd_error
@@ -159,6 +159,16 @@ localparam            CMD_REFRESH   = 3'b100;
 
 
 //Registers/Wires
+reg           [23:0]  write_data_count;
+reg           [23:0]  cmd_count;
+reg           [23:0]  read_data_count;
+
+reg           [23:0]  write_timeout;
+reg           [23:0]  cmd_timeout;
+reg           [23:0]  read_timeout;
+reg           [23:0]  read_data_size;
+
+reg                   p3_cmd_error;
 
 //Submodules
 
@@ -205,126 +215,130 @@ assign  p2_rd_count    = 0;
 assign  p2_rd_overflow = 0;
 assign  p2_rd_error    = 0;
 
+
+assign p3_wr_full   = (write_data_count == 63);
+assign p3_wr_empty  = (write_data_count == 0);
+
+assign p3_cmd_full  = (cmd_count == 4);
+assign p3_cmd_empty = (cmd_count == 0);
+
+assign p3_rd_full   = (read_data_count == 63);
+assign p3_rd_empty  = (read_data_count == 0);
+
+
 //Synchronous Logic
-
-reg [5:0] write_data_count;
-reg [5:0] read_data_count;
-reg [5:0] read_data_size;
-reg [1:0] cmd_count;
-
-parameter RAND_MAX_COUNT = 4;
-parameter RAND_MAX_LENGTH = 2;
-
-integer write_full_count;
-integer write_full_max_length;
-integer full_count;
-
-integer read_empty_count;
-integer empty_max_length;
-integer empty_count;
-
-initial begin
-  write_full_count      <= $urandom_range((RAND_MAX_COUNT ** 2), 0);
-  write_full_max_length <= $urandom_range((RAND_MAX_LENGTH ** 2), 0);
-
-  read_empty_count      <= $urandom_range((RAND_MAX_COUNT ** 2), 0);
-  empty_max_length      <= $urandom_range((RAND_MAX_LENGTH ** 2), 0);
-
-  //write_full_count      <= 10;
-  //write_full_max_length <= 10;
-    
-  //read_empty_count      <= 10;
-  //empty_max_length      <= 10;
-
-end
+parameter CFIFO_READ_DELAY = 20;
+parameter WFIFO_READ_DELAY = 20;
+parameter RFIFO_WRITE_DELAY = 10;
 
 always @ (posedge p3_cmd_clk) begin
   if (rst) begin
-    p3_cmd_empty        <=  1;
-    p3_cmd_full         <=  0;
-
-    cmd_count           <=  0;
-    write_data_count    <=  0;
-    read_data_count     <=  0;
-
-    p3_wr_full          <=  0;
-    p3_wr_empty         <=  1;
     p3_wr_count         <=  0;
     p3_wr_underrun      <=  0;
     p3_wr_error         <=  0;
 
-    full_count          <=  write_full_max_length;
-
-    p3_rd_full          <=  0;
-    p3_rd_empty         <=  1;
     p3_rd_data          <=  0;
     p3_rd_count         <=  0;
     p3_rd_overflow      <=  0;
     p3_rd_error         <=  0;
 
-    empty_count         <=  empty_max_length;
+    p3_cmd_error        <=  0;
+
+    cmd_count           <=  0;
+    read_data_count     <=  0;
+    write_data_count    <=  0;
+
+    read_timeout        <=  RFIFO_WRITE_DELAY;
+    write_timeout       <=  WFIFO_READ_DELAY;
+    cmd_timeout         <=  CFIFO_READ_DELAY;
+    read_data_size      <=  0;
 
   end
   else begin
     //Command Stuff
-    p3_cmd_empty    <=  1;
-    p3_cmd_full     <=  0;
-    if (p3_cmd_en && (p3_cmd_instr == CMD_WRITE) || (p3_cmd_instr == CMD_WRITE_PC)) begin
-      if (write_data_count  !=  p3_cmd_bl) begin
-        p3_wr_underrun  <=  1;
+    if (p3_cmd_en && !p3_cmd_full) begin
+        
+      if ((p3_cmd_instr == CMD_WRITE) || (p3_cmd_instr == CMD_WRITE_PC)) begin
+        if (write_data_count  <  p3_cmd_bl) begin
+          p3_wr_underrun  <=  1;
+        end
       end
-      write_data_count  <=  0;
-      write_full_count  <= $urandom_range((RAND_MAX_COUNT ** 2), 0);
-      write_full_max_length<= $urandom_range((RAND_MAX_LENGTH ** 2), 0);
-      //write_full_count  <= 10;
-      //write_full_max_length<= 10;
-
-
-
+      else if ((p3_cmd_instr == CMD_READ) || (p3_cmd_instr == CMD_READ_PC)) begin
+        read_data_size    <=  p3_cmd_bl;
+      end
+      cmd_count       <=  cmd_count + 1;
+      if (cmd_timeout == CFIFO_READ_DELAY) begin
+        cmd_timeout   <=  0;
+      end
     end
-    else if (p3_cmd_en && (p3_cmd_instr == CMD_READ) || (p3_cmd_instr == CMD_READ_PC)) begin
-      read_data_size    <=  p3_cmd_bl;
-      read_data_count   <=  0;
+    else if (p2_cmd_en && p2_cmd_full) begin
+      p3_cmd_error        <=  1;
     end
+
+    if (cmd_count > 0) begin
+      if (cmd_timeout < CFIFO_READ_DELAY) begin
+        cmd_timeout       <=  cmd_timeout + 1;
+      end
+      else begin
+        cmd_timeout       <=  0;
+        cmd_count         <=  cmd_count - 1;
+      end
+    end
+
+
+
+
+
+
 
 
     //Write Stuff
-    p3_wr_full         <=  1;
-    p3_wr_empty        <=  0;
-
-    if (full_count < write_full_max_length) begin
-      p3_wr_full        <=  1;
-      p3_wr_empty       <=  0;
-      full_count        <=  full_count + 1;
-    end
-
-    if (p3_wr_en && !p3_wr_full) begin
-      if (write_data_count[RAND_MAX_COUNT:0] == write_full_count) begin
-        full_count <= 0;
+    if ((write_data_count > 0) && (write_data_count < 64)) begin
+      if (write_timeout < WFIFO_READ_DELAY) begin
+          write_timeout <= write_timeout + 1;
       end
-      write_data_count  <=  write_data_count + 1;
+      else begin
+          write_timeout <=  0;
+          write_data_count <= write_data_count - 1;
+      end
     end
+    if (p3_wr_en && !p3_wr_full) begin
+      write_data_count  <=  write_data_count + 1;
+      if (write_timeout == WFIFO_READ_DELAY) begin
+        write_timeout   <=  0;
+      end
+    end
+
+
+
+
+
+
 
     //Read Stuff
-    if (read_data_count >= read_data_size) begin
-      p3_rd_full        <=  0;
-      p3_rd_empty       <=  1;
-    end
-    else begin
-      p3_rd_full        <=  1;
-      p3_rd_empty       <=  0;
-      if (empty_count < read_empty_count) begin
-        p3_rd_full      <=  0;
-        p3_rd_empty     <=  1;
-        empty_count     <=  empty_count + 1;
+    if (read_data_size > 0) begin
+      if (read_timeout < RFIFO_WRITE_DELAY) begin
+        read_timeout  <=  read_timeout + 1;
       end
-     
+      else begin
+        read_timeout  <=  0;
+        read_data_size <= read_data_size - 1;
+        read_data_count <= read_data_count + 1;
+      end
+    end
+
+    if (read_data_count > 0) begin
       if (p3_rd_en && !p3_rd_empty) begin
-        p3_rd_data      <=  p3_rd_data + 1;
-        if (p3_rd_data[RAND_MAX_COUNT:0] == read_empty_count) begin
-          empty_count <=  0;
+        if (read_data_count > 0) begin
+          read_data_count <= read_data_count - 1;
+          p3_rd_data     <= p3_rd_data + 1;
         end
       end
+    end
+
+    //Error Condition
+    if (p3_rd_en && p3_rd_empty) begin
+      p3_rd_error     <=  1;
     end
   end
 end

@@ -547,14 +547,14 @@ initial begin
         end
       end
       else begin
-        `ifdef VERBOSE
+        //`ifdef VERBOSE
         case (r_in_command)
           0: $display ("TB: Executing PING commad");
           1: $display ("TB: Executing WRITE command");
           2: $display ("TB: Executing READ command");
           3: $display ("TB: Executing RESET command");
         endcase
-        `endif
+        //`endif
         `ifdef VERBOSE $display ("Execute Command"); `endif
         execute_command                 <= 1;
         `SLEEP_CLK(1);
@@ -578,7 +578,8 @@ initial begin
         execute_command <= 0;
 
         while (command_finished) begin
-          `ifdef VERBOSE $display ("Command Finished"); `endif
+          //`ifdef VERBOSE $display ("Command Finished"); `endif
+          $display ("Command Finished");
           `SLEEP_CLK(1);
           execute_command <= 0;
         end

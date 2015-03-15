@@ -482,8 +482,14 @@ always @ (posedge clk) begin
       if_write_activate     <=  0;
       of_read_activate      <=  0;
     end
+    if ((if_write_activate > 0) && (write_count > 0)&& (if_write_ready > 0)) begin
+      //Other side is idle, give it something to do
+      if_write_activate <= 0;
+    end
 
-    if (i_wbs_stb && i_wbs_cyc) begin
+
+    //Strobe
+    else if (i_wbs_stb && i_wbs_cyc) begin
       //master is requesting somethign
       if (!o_wbs_ack) begin
         if (write_en) begin
@@ -492,12 +498,12 @@ always @ (posedge clk) begin
             if (write_count < if_write_fifo_size) begin
               if_write_strobe <=  1;
               o_wbs_ack       <=  1;
+              write_count     <=  write_count + 1;
             end
             else begin
               if_write_activate <=  0;
             end
           end
-          o_wbs_ack <= 1;
         end
         else begin
           //read request

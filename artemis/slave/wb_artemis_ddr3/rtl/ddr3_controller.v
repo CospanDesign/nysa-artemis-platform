@@ -60,7 +60,7 @@ input                       cmd_empty,    //Command FIFO empty
 input                       cmd_full,     //Command FIFO full
 
 output  reg                 wr_en,        //Write Data strobe
-input         [3:0]         wr_mask,      //Write Strobe Mask (Not used, always set to 0)
+output  reg   [3:0]         wr_mask,      //Write Strobe Mask (Not used, always set to 0)
 output  reg   [31:0]        wr_data,      //Data to write into memory
 input                       wr_full,      //Write FIFO is full
 input                       wr_empty,     //Write FIFO is empty
@@ -68,13 +68,13 @@ input         [6:0]         wr_count,     //Number of words in the write FIFO, t
 output  reg                 wr_underrun,  //There isn't enough data to fullfill the memory transaction
 output  reg                 wr_error,     //FIFO pointers are unsynchronized a reset is the only way to recover
 
-output  reg                 rd_en,        //Enable a read from memory FIFO
-output  reg   [31:0]        rd_data,      //data read from FIFO
-output  reg                 rd_full,      //FIFO is full
-output  reg                 rd_empty,     //FIFO is empty
-output  reg   [6:0]         rd_count,     //Number of elements inside the FIFO (This is slow to respond, so don't use it as a clock to clock estimate of how much data is available
-output  reg                 rd_overflow,  //the FIFO is overflowed and data is lost
-output  reg                 rd_error     //FIFO pointers are out of sync and a reset is required
+output                      rd_en,        //Enable a read from memory FIFO
+input         [31:0]        rd_data,      //data read from FIFO
+input                       rd_full,      //FIFO is full
+input                       rd_empty,     //FIFO is empty
+input         [6:0]         rd_count,     //Number of elements inside the FIFO (This is slow to respond, so don't use it as a clock to clock estimate of how much data is available
+input                       rd_overflow,  //the FIFO is overflowed and data is lost
+input                       rd_error     //FIFO pointers are out of sync and a reset is required
 
 );
 
@@ -118,11 +118,12 @@ reg                 of_fifo_reset = 0;
 wire        [1:0]   of_write_ready;
 reg         [1:0]   of_write_activate;
 wire        [23:0]  of_write_size;
-reg                 of_write_strobe;
-reg         [31:0]  of_write_data;
+wire                of_write_strobe;
 wire                of_inactive;
 
 reg         [23:0]  of_write_count;
+reg                 read_request;
+reg                 read_request_count;
 
 
 reg         [31:0]  data;
@@ -157,8 +158,8 @@ ppfifo#(
 );
 
 ppfifo#(
-  .DATA_WIDTH   (32),
-  .ADDRESS_WIDTH          (6)
+  .DATA_WIDTH             (32                                         ),
+  .ADDRESS_WIDTH          (6                                          )
 )mem_2_user(
   .reset                  (rst || !calibration_done || of_fifo_reset ),
 
@@ -168,7 +169,7 @@ ppfifo#(
   .write_activate         (of_write_activate                         ),
   .write_fifo_size        (of_write_size                             ),
   .write_strobe           (of_write_strobe                           ),
-  .write_data             (of_write_data                             ),
+  .write_data             (rd_data                                   ),
 
   .starved                (of_starved                                ),
 
@@ -184,6 +185,8 @@ ppfifo#(
 
 );
 //Asynchronous Logic
+assign    rd_en           = (read_request & !rd_empty);
+assign    of_write_strobe = rd_en;
 
 //Synchronous Logic
 always @ (posedge clk) begin
@@ -198,11 +201,11 @@ always @ (posedge clk) begin
 
     wr_en             <=  0;  //Strobe data into the write FIFO
     wr_data           <=  0;  //Data to be sent into the wirte FIFO
+    wr_mask           <=  0;
 
-    rd_en             <=  0;  //Read Strobe
-    rd_data           <=  0;  //Read Data
-    rd_empty          <=  0;  //Read FIFO Empty
-
+    //rd_en             <=  0;  //Read Strobe
+    read_request      <=  0;
+    read_request_count  <=  0;
 
     if_read_strobe    <=  0;
     if_read_activate  <=  0;
@@ -211,22 +214,19 @@ always @ (posedge clk) begin
 
     of_fifo_reset     <=  0;
     of_write_activate <=  0;
-    of_write_strobe   <=  0;
-    of_write_data     <=  0;
 
     of_write_count    <=  0;
     data              <=  0;
     local_address     <=  0;
-
   end
   else begin
     //Strobes
     cmd_en            <=  0;
     wr_en             <=  0;
-    rd_en             <=  0;
+    //rd_en             <=  0;
+    read_request      <=  0;
 
     if_read_strobe    <=  0;
-    of_write_strobe   <=  0;
 
     of_fifo_reset     <=  0;
 
@@ -278,6 +278,10 @@ always @ (posedge clk) begin
             wr_data             <=  if_read_data;
             wr_en               <=  1;
             if_read_count       <=  if_read_count + 1;
+            if_read_strobe      <=  1;
+          end
+          else begin
+            $display ("FIFO Full, attempting to write: %h", if_read_data);
           end
         end
         else begin
@@ -311,27 +315,27 @@ always @ (posedge clk) begin
         //Send the read command
         if(!cmd_full) begin
             cmd_instr           <=  CMD_READ_PC;
-            cmd_bl              <=  6'h3F;
+            cmd_bl              <=  of_write_size - 1;
+            cmd_en              <=  1;
             cmd_word_addr       <=  local_address;
+
             local_address       <=  local_address + 28'h040;
             state               <=  READ_DATA;
         end
       end
       READ_DATA: begin
-        if (of_write_count < of_write_size) begin
-          if (!rd_empty) begin
-            rd_en               <=  1;
+        if ((of_write_activate > 0) && (of_write_count < (of_write_size - 1))) begin
+          //if (!rd_empty) begin
+          read_request          <=  1;
+          if (rd_en) begin
+          //Srobe the data into the PPFIFO
+            //rd_en               <=  1;
+            of_write_count      <=  of_write_count + 1;
           end
         end
         else begin
           state                 <=  READ_READY;
           of_write_activate     <=  0;
-        end
-
-        //Srobe the data into the PPFIFO
-        if (rd_en) begin
-          of_write_strobe       <=  1;
-          of_write_data         <=  rd_data;
         end
       end
       default: begin
