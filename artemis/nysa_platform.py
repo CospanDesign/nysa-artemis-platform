@@ -20,7 +20,7 @@
 #SOFTWARE.
 
 """
-Dionysus Interface
+Artemis Interface
 """
 __author__ = 'dave.mccoy@cospandesign.com (Dave McCoy)'
 
@@ -39,12 +39,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__),
 
 import nysa
 from nysa.ibuilder.lib.xilinx_utils import find_xilinx_path
-from dionysus import Dionysus
+from artemis import Artemis
 
-class DionysusPlatform(Platform):
+class ArtemisPlatform(Platform):
 
     def __init__(self, status = None):
-        super (DionysusPlatform, self).__init__(status)
+        super (ArtemisPlatform, self).__init__(status)
         self.vendor = 0x0403
         self.product = 0x8531
 
@@ -58,9 +58,9 @@ class DionysusPlatform(Platform):
         for device in devices:
             if device.idVendor == self.vendor and device.idProduct == self.product:
                 #sernum = usb.util.get_string(device, 64, device.iSerialNumber)
-                #print "Found a Dionysus Device: Serial Number: %s" % sernum
+                #print "Found a Artemis Device: Serial Number: %s" % sernum
 
-                self.add_device_dict(device.serial_number, Dionysus(idVendor = self.vendor, 
+                self.add_device_dict(device.serial_number, Artemis(idVendor = self.vendor, 
                                                       idProduct = self.product,
                                                       sernum = device.serial_number,
                                                       status = self.status))

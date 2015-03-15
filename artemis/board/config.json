@@ -5,9 +5,9 @@
 	"fpga_part_number":"xc6slx45tfgg484-2",
   "host_inteface":"ft_master_interface",
 	"default_constraint_files":[
-		"dionysus.ucf"
+		"artemis.ucf"
 	],
-  "image":"dionysus.png",
+  "image":"artemis.png",
   "default_project":"artemis_usb2_default.json",
 	"invert_reset":true,
   "build_flags":{
