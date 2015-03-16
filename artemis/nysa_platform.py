@@ -35,7 +35,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__),
 
 
 import nysa
-from artemis import Artemis
 
 class ArtemisPlatform(Platform):
 
