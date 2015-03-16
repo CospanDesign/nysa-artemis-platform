@@ -18,7 +18,7 @@ except:
 setup( 
     name='nysa-artemis-platform',
     version='0.0.1',
-    description='Artemis USB 2.0 Platform for Nysa',
+    description='Artemis Base Platform for Nysa',
     author='Cospan Design',
     author_email='dave.mccoy@cospandesign.com',
     packages=find_packages('.'),
