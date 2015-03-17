@@ -1,20 +1,15 @@
 {
-	"board_name":"Artemis",
-	"vendor":"Cospan Design",
-	"build_tool":"xilinx",
-	"fpga_part_number":"xc6slx45tfgg484-2",
-  "host_inteface":"ft_master_interface",
-	"default_constraint_files":[
-		"artemis.ucf",
-    "../cores/ddr3/ddr3.ucf"
-	],
-  "image":"artemis.png",
-	"invert_reset":true,
-  "build_flags":{
-    "bitgen":{
-      "config":{
-        "Binary":"Yes"
-      }
-    }
-  }
+    "board_name":"Artemis",
+    "vendor":"Cospan Design",
+    "build_tool":"xilinx",
+    "fpga_part_number":"xc6slx45tfgg484-3",
+    "default_constraint_files":[
+        "artemis.ucf",
+        "../cores/ddr3/ddr3.ucf"
+    ],
+    "cores":[
+        "artemis_ddr3"
+    ]
+    "image":"artemis.png",
+    "invert_reset":true
 }
