@@ -1,0 +1,12 @@
+{
+  "bind":{
+    "clk":{
+      "direction":"input",
+      "loc":"clk"
+    },
+    "rst":{
+      "direction":"input",
+      "loc":"rst"
+    }
+  }
+}
