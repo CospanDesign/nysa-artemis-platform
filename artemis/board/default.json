@@ -1,12 +1,28 @@
 {
-  "bind":{
-    "clk":{
-      "direction":"input",
-      "loc":"clk"
-    },
-    "rst":{
-      "direction":"input",
-      "loc":"rst"
+  "infrastructure":[
+    {
+      "artemis_infrastructure":{
+        "bind":{
+          "clk_100mhz":{
+            "direction":"input",
+            "loc":"clk_100mhz"
+          },
+          "clk_333mhz_out":{
+            "direction":"output",
+            "loc":"clk_333mhz_out"
+          },
+          "clk_333mhz":{
+            "direction":"input",
+            "loc":"clk_333mhz"
+          },
+          "board_rst":{
+            "direction":"input",
+            "loc":"board_rst"
+          }
+        }
+      }
     }
+  ],
+  "bind":{
   }
 }

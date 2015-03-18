@@ -1,6 +1,6 @@
 /*
 Distributed under the MIT license.
-Copyright (c) 2011 Dave McCoy (dave.mccoy@cospandesign.com)
+Copyright (c) 2015 Dave McCoy (dave.mccoy@cospandesign.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -30,7 +30,6 @@ input                       clk,
 input                       rst,
 
 //Memory Controller Interface
-input                       calibration_done,
 input         [27:0]        address,
 input                       write_en, //set high to initiate a write transaction
                                       //this will not finish until everything in the PPFIFO is empty
@@ -49,7 +48,6 @@ output                      of_read_ready,
 input                       of_read_activate,
 output        [23:0]        of_read_size,
 output        [31:0]        of_read_data,
-
 
 //Local Registers/Wires
 output  reg                 cmd_en,       //Command is strobed into controller
@@ -74,8 +72,7 @@ input                       rd_full,      //FIFO is full
 input                       rd_empty,     //FIFO is empty
 input         [6:0]         rd_count,     //Number of elements inside the FIFO (This is slow to respond, so don't use it as a clock to clock estimate of how much data is available
 input                       rd_overflow,  //the FIFO is overflowed and data is lost
-input                       rd_error     //FIFO pointers are out of sync and a reset is required
-
+input                       rd_error      //FIFO pointers are out of sync and a reset is required
 );
 
 //Local Parameters
@@ -134,7 +131,7 @@ ppfifo#(
   .DATA_WIDTH             (32                                        ),
   .ADDRESS_WIDTH          (6                                         )
 )user_2_mem(
-  .reset                  (rst || !calibration_done                  ),
+  .reset                  (rst                                       ),
 
   //Write
   .write_clock            (clk                                       ),
@@ -161,27 +158,27 @@ ppfifo#(
   .DATA_WIDTH             (32                                         ),
   .ADDRESS_WIDTH          (6                                          )
 )mem_2_user(
-  .reset                  (rst || !calibration_done || of_fifo_reset ),
+  .reset                  (rst || of_fifo_reset                       ),
 
   //Write
-  .write_clock            (clk                                       ),
-  .write_ready            (of_write_ready                            ),
-  .write_activate         (of_write_activate                         ),
-  .write_fifo_size        (of_write_size                             ),
-  .write_strobe           (of_write_strobe                           ),
-  .write_data             (rd_data                                   ),
+  .write_clock            (clk                                        ),
+  .write_ready            (of_write_ready                             ),
+  .write_activate         (of_write_activate                          ),
+  .write_fifo_size        (of_write_size                              ),
+  .write_strobe           (of_write_strobe                            ),
+  .write_data             (rd_data                                    ),
 
-  .starved                (of_starved                                ),
+  .starved                (of_starved                                 ),
 
   //Read
-  .read_clock             (clk                                       ),
-  .read_strobe            (of_read_strobe                            ),
-  .read_ready             (of_read_ready                             ),
-  .read_activate          (of_read_activate                          ),
-  .read_count             (of_read_size                              ),
-  .read_data              (of_read_data                              ),
+  .read_clock             (clk                                        ),
+  .read_strobe            (of_read_strobe                             ),
+  .read_ready             (of_read_ready                              ),
+  .read_activate          (of_read_activate                           ),
+  .read_count             (of_read_size                               ),
+  .read_data              (of_read_data                               ),
 
-  .inactive               (of_inactive                               )
+  .inactive               (of_inactive                                )
 
 );
 //Asynchronous Logic
@@ -264,7 +261,7 @@ always @ (posedge clk) begin
         if (if_read_activate) begin
           state               <=  WRITE_DATA;
         end
-        else if (!write_en && if_inactive) begin  //XXX: There might be an error where data can possible get through when inactive  
+        else if (!write_en && if_inactive) begin  //XXX: There might be an error where data can possible get through when inactive
                                                   //For example writing one piece of data as the last piece
           state               <=  IDLE;
         end

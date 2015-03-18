@@ -1,30 +1,30 @@
 
 module artemis_ddr3 (
-  input           clk_100mhz,
-  input           rst,
-
+  input           clk_333mhz,
+  input           board_rst,
   output          calibration_done,
-
   output          usr_clk,
-  output          usr_rst,
+  output          rst,
 
-  inout   [7:0]   mcb3_dram_dq,
-  output  [13:0]  mcb3_dram_a,
-  output  [2:0]   mcb3_dram_ba,
-  output          mcb3_dram_ras_n,
-  output          mcb3_dram_cas_n,
-  output          mcb3_dram_we_n,
-  output          mcb3_dram_odt,
-  output          mcb3_dram_reset_n,
-  output          mcb3_dram_cke,
-  output          mcb3_dram_dm,
-  inout           mcb3_rzq,
-  inout           mcb3_zio,
-  inout           mcb3_dram_dqs,
-  inout           mcb3_dram_dqs_n,
-  output          mcb3_dram_ck,
-  output          mcb3_dram_ck_n,
+  //Memory Interface
+  inout  [7:0]    ddr3_dram_dq,
+  output [13:0]   ddr3_dram_a,
+  output [2:0]    ddr3_dram_ba,
+  output          ddr3_dram_ras_n,
+  output          ddr3_dram_cas_n,
+  output          ddr3_dram_we_n,
+  output          ddr3_dram_odt,
+  output          ddr3_dram_reset_n,
+  output          ddr3_dram_cke,
+  output          ddr3_dram_dm,
+  inout           ddr3_rzq,
+  inout           ddr3_zio,
+  inout           ddr3_dram_dqs,
+  inout           ddr3_dram_dqs_n,
+  output          ddr3_dram_ck,
+  output          ddr3_dram_ck_n,
 
+  //Port Interfaces
   input           p0_cmd_clk,
   input           p0_cmd_en,
   input   [2:0]   p0_cmd_instr,
@@ -124,6 +124,7 @@ module artemis_ddr3 (
   output  [6:0]   p3_rd_count,
   output          p3_rd_overflow,
   output          p3_rd_error
+
 );
 
 endmodule
