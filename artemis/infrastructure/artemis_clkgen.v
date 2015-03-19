@@ -17,54 +17,50 @@ wire        clk_fbout_buf;
 wire        clk_100mhz_out;
 
 //Submodules
-ibufg clk_100mhz_buf (
-  .i                    (clk_100mhz           ),
-  .o                    (clk_100mhz_buf       )
+IBUFG clk_100mhz_ibuf (
+  .I                    (clk_100mhz           ),
+  .O                    (clk                  )
 );
 
-bufg  clkfb_buf (
-  .i                    (clkfbout             ),
-  .o                    (clkfbout_buf         )
+BUFG  clkfb_buf (
+  .I                    (clk_fbout            ),
+  .O                    (clk_fbout_buf        )
 );
 
-bufg  clk100mhz_buf (
-  .i                    (clk_100mhz_out       ),
-  .o                    (clk                  )
+BUFG ddr3_clk_obuf     (
+  .I                    (ddr3_clk_pre         ),
+  .O                    (ddr3_clk             )
 );
 
 
-
-pll_base #(
-  .bandwidth            ("OPTIMIZED"          ),
-  .clk_feedback         ("CLKFBOUT"           ),
-  .compensation         ("SYSTEM_SYNCHRONOUS" ),
-  .divclk_divide        (1                    ),
-  .clkfbout_mult        (10                   ),
-  .clkfbout_phase       (0.00                 ),
-  .clkout0_divide       (10                   ),
-  .clkout0_phase        (0.00                 ),
-  .clkout0_duty_cycle   (0.50                 ),
-  .clkout1_divide       (3                    ),
-  .clkout1_phase        (0.00                 ),
-  .clkout1_duty_cycle   (0.50                 ),
-  .clkin_period         (10.0                 ),
-  .ref_jitter           (0.010                )
+PLL_BASE #(
+  .BANDWIDTH            ("OPTIMIZED"          ),
+  .CLK_FEEDBACK         ("CLKFBOUT"           ),
+  .COMPENSATION         ("SYSTEM_SYNCHRONOUS" ),
+  .DIVCLK_DIVIDE        (1                    ),
+  .CLKFBOUT_MULT        (10                   ),
+  .CLKFBOUT_PHASE       (0.00                 ),
+  .CLKOUT0_DIVIDE       (3                    ),
+  .CLKOUT0_PHASE        (0.00                 ),
+  .CLKOUT0_DUTY_CYCLE   (0.50                 ),
+  .CLKIN_PERIOD         (10.0                 ),
+  .REF_JITTER           (0.010                )
 
 ) artemis_clkgen_pll(
 
-  .clkfbout             (clk_fbout            ),
-  .clkout0              (clk_100mhz_out       ),
-  .clkout1              (ddr3_clk             ),
-  .clkout2              (                     ),
-  .clkout3              (                     ),
-  .clkout4              (                     ),
-  .clkout5              (                     ),
+  .CLKFBOUT             (clk_fbout            ),
+//  .CLKOUT0              (ddr3_clk             ),
+  .CLKOUT0              (ddr3_clk_pre         ),
+  .CLKOUT2              (                     ),
+  .CLKOUT3              (                     ),
+  .CLKOUT4              (                     ),
+  .CLKOUT5              (                     ),
 
-  .locked               (locked               ),
-  .rst                  (rst                  ),
+  .LOCKED               (locked               ),
+  .RST                  (rst                  ),
 
-  .clkfbin              (clk_fbout_buf        ),
-  .clkin                (clk_100mhz_buf       )
+  .CLKFBIN              (clk_fbout_buf        ),
+  .CLKIN                (clk                  )
 );
 
 //Assynchronous Logic

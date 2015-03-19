@@ -35,12 +35,13 @@ SOFTWARE.
 
 module artemis_infrastructure (
   input                 clk_100mhz,
-  output                clk_333mhz_out,
-  input                 clk_333mhz,
   output                clk,
-  input                 board_rst,
+  input                 rst,
   output                calibration_done,
-  output                rst,
+  output                ddr3_rst,
+
+  output                ddr3_clk_out,
+  input                 ddr3_clk_in,
 
   inout         [7:0]   ddr3_dram_dq,
   output        [13:0]  ddr3_dram_a,
@@ -52,12 +53,13 @@ module artemis_infrastructure (
   output                ddr3_dram_reset_n,
   output                ddr3_dram_cke,
   output                ddr3_dram_dm,
-  inout                 ddr3_rzq,
-  inout                 ddr3_zio,
+  inout                 ddr3_dram_rzq,
+  inout                 ddr3_dram_zio,
   inout                 ddr3_dram_dqs,
   inout                 ddr3_dram_dqs_n,
   output                ddr3_dram_ck,
   output                ddr3_dram_ck_n,
+
 
   input                 p0_cmd_clk,
   input                 p0_cmd_en,
@@ -165,18 +167,18 @@ module artemis_infrastructure (
 //Registers/Wires
 
 //Submodules
-artemis_clkgen(
+artemis_clkgen clkgen(
   .clk_100mhz         (clk_100mhz           ),
   .rst                (board_rst            ),
 
   .locked             (locked               ),
 
   .clk                (clk                  ),
-  .ddr3_clk           (clk_333mhz_out       )
+  .ddr3_clk           (ddr3_clk_out         )
 );
 
 artemis_ddr3 artemis_ddr3_cntrl(
-  .clk_333mhz         (clk_333mhz            ),
+  .clk_333mhz         (ddr3_clk_in           ),
   .board_rst          (board_rst             ),
 
   .calibration_done   (calibration_done      ),
@@ -184,22 +186,22 @@ artemis_ddr3 artemis_ddr3_cntrl(
   .usr_clk            (usr_clk               ),
   .rst                (rst                   ),
 
-  .mcb3_dram_dq       (ddr3_dram_dq          ),
-  .mcb3_dram_a        (ddr3_dram_a           ),
-  .mcb3_dram_ba       (ddr3_dram_ba          ),
-  .mcb3_dram_ras_n    (ddr3_dram_ras_n       ),
-  .mcb3_dram_cas_n    (ddr3_dram_cas_n       ),
-  .mcb3_dram_we_n     (ddr3_dram_we_n        ),
-  .mcb3_dram_odt      (ddr3_dram_odt         ),
-  .mcb3_dram_reset_n  (ddr3_dram_reset_n     ),
-  .mcb3_dram_cke      (ddr3_dram_cke         ),
-  .mcb3_dram_dm       (ddr3_dram_dm          ),
-  .mcb3_rzq           (ddr3_rzq              ),
-  .mcb3_zio           (ddr3_zio              ),
-  .mcb3_dram_dqs      (ddr3_dram_dqs         ),
-  .mcb3_dram_dqs_n    (ddr3_dram_dqs_n       ),
-  .mcb3_dram_ck       (ddr3_dram_ck          ),
-  .mcb3_dram_ck_n     (ddr3_dram_ck_n        ),
+  .ddr3_dram_dq       (ddr3_dram_dq          ),
+  .ddr3_dram_a        (ddr3_dram_a           ),
+  .ddr3_dram_ba       (ddr3_dram_ba          ),
+  .ddr3_dram_ras_n    (ddr3_dram_ras_n       ),
+  .ddr3_dram_cas_n    (ddr3_dram_cas_n       ),
+  .ddr3_dram_we_n     (ddr3_dram_we_n        ),
+  .ddr3_dram_odt      (ddr3_dram_odt         ),
+  .ddr3_dram_reset_n  (ddr3_dram_reset_n     ),
+  .ddr3_dram_cke      (ddr3_dram_cke         ),
+  .ddr3_dram_dm       (ddr3_dram_dm          ),
+  .ddr3_rzq           (ddr3_dram_rzq         ),
+  .ddr3_zio           (ddr3_dram_zio         ),
+  .ddr3_dram_dqs      (ddr3_dram_dqs         ),
+  .ddr3_dram_dqs_n    (ddr3_dram_dqs_n       ),
+  .ddr3_dram_ck       (ddr3_dram_ck          ),
+  .ddr3_dram_ck_n     (ddr3_dram_ck_n        ),
 
   .p0_cmd_clk         (p0_cmd_clk            ),
   .p0_cmd_en          (p0_cmd_en             ),

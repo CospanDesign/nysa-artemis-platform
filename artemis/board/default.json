@@ -1,28 +1,213 @@
 {
-  "infrastructure":[
-    {
-      "artemis_infrastructure":{
-        "bind":{
-          "clk_100mhz":{
+    "bind":{
+        "rst":{
             "direction":"input",
-            "loc":"clk_100mhz"
-          },
-          "clk_333mhz_out":{
-            "direction":"output",
-            "loc":"clk_333mhz_out"
-          },
-          "clk_333mhz":{
-            "direction":"input",
-            "loc":"clk_333mhz"
-          },
-          "board_rst":{
-            "direction":"input",
-            "loc":"board_rst"
-          }
+            "loc":"rst"
         }
-      }
+    },
+    "MEMORY":{
+        "ddr3_mem":{
+            "filename":"wb_artemis_ddr3.v"
+        }
+    },
+    "infrastructure":[
+    {
+        "artemis":{
+            "filename":"artemis_infrastructure.v",
+            "bind":{
+                "clk_100mhz":{
+                    "direction":"input",
+                    "loc":"clk_100mhz"
+                },
+                "ddr3_clk_out":{
+                    "direction":"output",
+                    "loc":"ddr3_clk_out"
+                },
+                "ddr3_clk_in":{
+                    "direction":"input",
+                    "loc":"ddr3_clk_in"
+                },
+                "ddr3_dram_dq[7:0]":{
+                    "direction":"inout",
+                    "loc":"ddr3_dram_dq[7:0]"
+                },
+                "ddr3_dram_a[13:0]":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_a[13:0]"
+                },
+                "ddr3_dram_ba[2:0]":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_ba[2:0]"
+                },
+                "ddr3_dram_ras_n":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_ras_n"
+                },
+                "ddr3_dram_cas_n":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_cas_n"
+                },
+                "ddr3_dram_we_n":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_we_n"
+                },
+                "ddr3_dram_odt":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_odt"
+                },
+                "ddr3_dram_reset_n":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_reset_n"
+                },
+                "ddr3_dram_cke":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_cke"
+                },
+                "ddr3_dram_dm":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_dm"
+                },
+                "ddr3_dram_rzq":{
+                    "direction":"inout",
+                    "loc":"ddr3_rzq"
+                },
+                "ddr3_dram_zio":{
+                    "direction":"inout",
+                    "loc":"ddr3_zio"
+                },
+                "ddr3_dram_dqs":{
+                    "direction":"inout",
+                    "loc":"ddr3_dram_dqs"
+                },
+                "ddr3_dram_dqs_n":{
+                    "direction":"inout",
+                    "loc":"ddr3_dram_dqs_n"
+                },
+                "ddr3_dram_ck":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_ck"
+                },
+                "ddr3_dram_ck_n":{
+                    "direction":"output",
+                    "loc":"ddr3_dram_ck_n"
+                }
+            }
+        }
     }
-  ],
-  "bind":{
-  }
+    ],
+        "cores":[
+        {
+            "artemis":[
+                "artemis_ddr3.ngc"
+                ]
+        }
+    ],
+    "internal_bind":{
+        "p3_cmd_clk": {
+            "signal":"ddr3_mem_ddr3_cmd_clk"
+        },
+        "p3_cmd_en": {
+            "signal":"ddr3_mem_ddr3_cmd_en"
+        },
+        "p3_cmd_instr": {
+            "signal":"ddr3_mem_ddr3_cmd_instr"
+        },
+        "p3_cmd_bl": {
+            "signal":"ddr3_mem_ddr3_cmd_bl"
+        },
+        "p3_cmd_byte_addr": {
+            "signal":"ddr3_mem_ddr3_cmd_byte_addr"
+        },
+        "ddr3_mem_ddr3_cmd_empty": {
+            "signal":"p3_cmd_empty"
+        },
+        "ddr3_mem_ddr3_cmd_full": {
+            "signal":"p3_cmd_full"
+        },
+        "p3_wr_clk": {
+            "signal":"ddr3_mem_ddr3_wr_clk"
+        },
+        "p3_wr_en": {
+            "signal":"ddr3_mem_ddr3_wr_en"
+        },
+        "p3_wr_mask": {
+            "signal":"ddr3_mem_ddr3_wr_mask"
+        },
+        "p3_wr_data": {
+            "signal":"ddr3_mem_ddr3_wr_data"
+        },
+        "ddr3_mem_ddr3_wr_full": {
+            "signal":"p3_wr_full"
+        },
+        "ddr3_mem_ddr3_wr_empty": {
+            "signal":"p3_wr_empty"
+        },
+        "ddr3_mem_ddr3_wr_count": {
+            "signal":"p3_wr_count"
+        },
+        "ddr3_mem_ddr3_wr_underrun": {
+            "signal":"p3_wr_underrun"
+        },
+        "ddr3_mem_ddr3_wr_error": {
+            "signal":"p3_wr_error"
+        },
+        "p3_rd_clk": {
+            "signal":"ddr3_mem_ddr3_rd_clk"
+        },
+        "p3_rd_en": {
+            "signal":"ddr3_mem_ddr3_rd_en"
+        },
+        "ddr3_mem_ddr3_rd_data": {
+            "signal":"p3_rd_data"
+        },
+        "ddr3_mem_ddr3_rd_full": {
+            "signal":"p3_rd_full"
+        },
+        "ddr3_mem_ddr3_rd_empty": {
+            "signal":"p3_rd_empty"
+        },
+        "ddr3_mem_ddr3_rd_count": {
+            "signal":"p3_rd_count"
+        },
+        "ddr3_mem_ddr3_rd_overflow": {
+            "signal":"p3_rd_overflow"
+        },
+        "ddr3_mem_ddr3_rd_error": {
+            "signal":"p3_rd_error"
+        },
+        "p0_wr_data":{"signal":"0"},
+        "p1_wr_en":{"signal":"0"},
+        "p0_cmd_byte_addr":{"signal":"0"},
+        "p0_wr_mask":{"signal":"0"},
+        "p0_cmd_bl":{"signal":"0"},
+        "p0_wr_clk":{"signal":"0"},
+        "p1_rd_en":{"signal":"0"},
+        "p2_wr_data":{"signal":"0"},
+        "p2_cmd_byte_addr":{"signal":"0"},
+        "p2_wr_clk":{"signal":"0"},
+        "p1_wr_clk":{"signal":"0"},
+        "p1_cmd_instr":{"signal":"0"},
+        "p1_cmd_bl":{"signal":"0"},
+        "p2_cmd_bl":{"signal":"0"},
+        "p2_wr_mask":{"signal":"0"},
+        "p1_wr_data":{"signal":"0"},
+        "p2_rd_en":{"signal":"0"},
+        "p2_wr_en":{"signal":"0"},
+        "p0_rd_clk":{"signal":"0"},
+        "p1_cmd_byte_addr":{"signal":"0"},
+        "p1_wr_mask":{"signal":"0"},
+        "p0_wr_en":{"signal":"0"},
+        "p1_rd_clk":{"signal":"0"},
+        "p2_rd_clk":{"signal":"0"},
+        "p0_rd_en":{"signal":"0"},
+        "p1_cmd_clk":{"signal":"0"},
+        "p2_cmd_clk":{"signal":"0"},
+        "p0_cmd_instr":{"signal":"0"},
+        "p1_cmd_en":{"signal":"0"},
+        "p2_cmd_instr":{"signal":"0"},
+        "p0_cmd_en":{"signal":"0"},
+        "p0_cmd_clk":{"signal":"0"},
+        "p2_cmd_en":{"signal":"0"}
+    }
 }
+

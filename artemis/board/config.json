@@ -6,10 +6,7 @@
   "default_constraint_files":[
     "artemis.ucf"
     ],
-  "cores":[
-    "artemis_ddr3"
-    ],
   "image":"artemis.png",
-  "invert_reset":true,
+  "invert_reset":false,
   "clockrate":100000000
 }

@@ -70,32 +70,32 @@ module wb_artemis_ddr3 (
   input                 rst,
 
   //DDR3 Control Signals
-  output                cmd_clk,
-  output                cmd_en,
-  output        [2:0]   cmd_instr,
-  output        [5:0]   cmd_bl,
-  output        [29:0]  cmd_byte_addr,
-  input                 cmd_empty,
-  input                 cmd_full,
+  output                ddr3_cmd_clk,
+  output                ddr3_cmd_en,
+  output        [2:0]   ddr3_cmd_instr,
+  output        [5:0]   ddr3_cmd_bl,
+  output        [29:0]  ddr3_cmd_byte_addr,
+  input                 ddr3_cmd_empty,
+  input                 ddr3_cmd_full,
 
-  output                wr_clk,
-  output                wr_en,
-  output        [3:0]   wr_mask,
-  output        [31:0]  wr_data,
-  input                 wr_full,
-  input                 wr_empty,
-  input         [6:0]   wr_count,
-  input                 wr_underrun,
-  input                 wr_error,
+  output                ddr3_wr_clk,
+  output                ddr3_wr_en,
+  output        [3:0]   ddr3_wr_mask,
+  output        [31:0]  ddr3_wr_data,
+  input                 ddr3_wr_full,
+  input                 ddr3_wr_empty,
+  input         [6:0]   ddr3_wr_count,
+  input                 ddr3_wr_underrun,
+  input                 ddr3_wr_error,
 
-  output                rd_clk,
-  output                rd_en,
-  input         [31:0]  rd_data,
-  input                 rd_full,
-  input                 rd_empty,
-  input         [6:0]   rd_count,
-  input                 rd_overflow,
-  input                 rd_error,
+  output                ddr3_rd_clk,
+  output                ddr3_rd_en,
+  input         [31:0]  ddr3_rd_data,
+  input                 ddr3_rd_full,
+  input                 ddr3_rd_empty,
+  input         [6:0]   ddr3_rd_count,
+  input                 ddr3_rd_overflow,
+  input                 ddr3_rd_error,
 
   //Wishbone Bus Signals
   input                 i_wbs_we,
@@ -118,6 +118,7 @@ module wb_artemis_ddr3 (
 reg           write_en;
 reg           read_en;
 
+wire  [27:0]  ddr3_cmd_word_addr;
 reg           if_write_strobe;
 wire  [1:0]   if_write_ready;
 reg   [1:0]   if_write_activate;
@@ -129,31 +130,6 @@ wire          of_read_ready;
 reg           of_read_activate;
 wire  [23:0]  of_read_size;
 wire  [31:0]  of_read_data;
-
-
-wire          cmd_en;
-wire   [2:0]  cmd_instr;
-wire   [5:0]  cmd_bl;
-wire   [27:0] cmd_word_addr;
-wire          cmd_empty;
-wire          cmd_full;
-
-wire          wr_en;
-wire   [3:0]  wr_mask;
-wire   [31:0] wr_data;
-wire          wr_full;
-wire          wr_empty;
-wire   [6:0]  wr_count;
-wire          wr_underrun;
-wire          wr_error;
-
-wire          rd_en;
-wire   [31:0] rd_data;
-wire          rd_full;
-wire          rd_empty;
-wire   [6:0]  rd_count;
-wire          rd_overflow;
-wire          rd_error;
 
 
 reg   [23:0]  write_count;
@@ -185,39 +161,39 @@ ddr3_controller dc(
   .of_read_data       (of_read_data          ),
 
 
-  .cmd_en             (cmd_en                ),
-  .cmd_instr          (cmd_instr             ),
-  .cmd_bl             (cmd_bl                ),
-  .cmd_word_addr      (cmd_word_addr         ),
-  .cmd_empty          (cmd_empty             ),
-  .cmd_full           (cmd_full              ),
+  .cmd_en             (ddr3_cmd_en           ),
+  .cmd_instr          (ddr3_cmd_instr        ),
+  .cmd_bl             (ddr3_cmd_bl           ),
+  .cmd_word_addr      (ddr3_cmd_word_addr    ),
+  .cmd_empty          (ddr3_cmd_empty        ),
+  .cmd_full           (ddr3_cmd_full         ),
 
-  .wr_en              (wr_en                 ),
-  .wr_mask            (wr_mask               ),
-  .wr_data            (wr_data               ),
-  .wr_full            (wr_full               ),
-  .wr_empty           (wr_empty              ),
-  .wr_count           (wr_count              ),
-  .wr_underrun        (wr_underrun           ),
-  .wr_error           (wr_error              ),
+  .wr_en              (ddr3_wr_en            ),
+  .wr_mask            (ddr3_wr_mask          ),
+  .wr_data            (ddr3_wr_data          ),
+  .wr_full            (ddr3_wr_full          ),
+  .wr_empty           (ddr3_wr_empty         ),
+  .wr_count           (ddr3_wr_count         ),
+  .wr_underrun        (ddr3_wr_underrun      ),
+  .wr_error           (ddr3_wr_error         ),
 
-  .rd_en              (rd_en                 ),
-  .rd_data            (rd_data               ),
-  .rd_full            (rd_full               ),
-  .rd_empty           (rd_empty              ),
-  .rd_count           (rd_count              ),
-  .rd_overflow        (rd_overflow           ),
-  .rd_error           (rd_error              )
+  .rd_en              (ddr3_rd_en            ),
+  .rd_data            (ddr3_rd_data          ),
+  .rd_full            (ddr3_rd_full          ),
+  .rd_empty           (ddr3_rd_empty         ),
+  .rd_count           (ddr3_rd_count         ),
+  .rd_overflow        (ddr3_rd_overflow      ),
+  .rd_error           (ddr3_rd_error         )
 
 );
 
 
 //Asynchronous Logic
 
-assign  cmd_clk               <=  clk;
-assign  wr_clk                <=  clk;
-assign  rd_clk                <=  clk;
-assign  cmd_byte_addr         <=  {cmd_word_addr, 2'b0};
+assign  ddr3_cmd_clk               =  clk;
+assign  ddr3_wr_clk                =  clk;
+assign  ddr3_rd_clk                =  clk;
+assign  ddr3_cmd_byte_addr         =  {ddr3_cmd_word_addr, 2'b0};
 
 //Synchronous Logic
 always @ (posedge clk) begin
