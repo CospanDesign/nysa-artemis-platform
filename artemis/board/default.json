@@ -110,6 +110,30 @@
         "init_rst":{
             "signal":"startup_rst"
         },
+        "gpio1_gpio_in[22]":{
+            "signal":"p3_rd_full"
+        },
+        "gpio1_gpio_in[23]":{
+            "signal":"p3_rd_empty"
+        },
+        "gpio1_gpio_in[24]":{
+            "signal":"p3_rd_overflow"
+        },
+        "gpio1_gpio_in[25]":{
+            "signal":"p3_rd_error"
+        },
+        "gpio1_gpio_in[26]":{
+            "signal":"p3_wr_empty"
+        },
+        "gpio1_gpio_in[27]":{
+            "signal":"p3_wr_full"
+        },
+        "gpio1_gpio_in[28]":{
+            "signal":"p3_wr_underrun"
+        },
+        "gpio1_gpio_in[29]":{
+            "signal":"p3_wr_error"
+        },
         "gpio1_gpio_in[30]":{
             "signal":"calibration_done"
         },
@@ -188,39 +212,105 @@
         "ddr3_mem_ddr3_rd_error": {
             "signal":"p3_rd_error"
         },
-        "p0_wr_data":{"signal":"0"},
-        "p1_wr_en":{"signal":"0"},
-        "p0_cmd_byte_addr":{"signal":"0"},
-        "p0_wr_mask":{"signal":"0"},
-        "p0_cmd_bl":{"signal":"0"},
-        "p0_wr_clk":{"signal":"0"},
-        "p1_rd_en":{"signal":"0"},
-        "p2_wr_data":{"signal":"0"},
-        "p2_cmd_byte_addr":{"signal":"0"},
-        "p2_wr_clk":{"signal":"0"},
-        "p1_wr_clk":{"signal":"0"},
-        "p1_cmd_instr":{"signal":"0"},
-        "p1_cmd_bl":{"signal":"0"},
-        "p2_cmd_bl":{"signal":"0"},
-        "p2_wr_mask":{"signal":"0"},
-        "p1_wr_data":{"signal":"0"},
-        "p2_rd_en":{"signal":"0"},
-        "p2_wr_en":{"signal":"0"},
-        "p0_rd_clk":{"signal":"0"},
-        "p1_cmd_byte_addr":{"signal":"0"},
-        "p1_wr_mask":{"signal":"0"},
-        "p0_wr_en":{"signal":"0"},
-        "p1_rd_clk":{"signal":"0"},
-        "p2_rd_clk":{"signal":"0"},
-        "p0_rd_en":{"signal":"0"},
-        "p1_cmd_clk":{"signal":"0"},
-        "p2_cmd_clk":{"signal":"0"},
-        "p0_cmd_instr":{"signal":"0"},
-        "p1_cmd_en":{"signal":"0"},
-        "p2_cmd_instr":{"signal":"0"},
-        "p0_cmd_en":{"signal":"0"},
-        "p0_cmd_clk":{"signal":"0"},
-        "p2_cmd_en":{"signal":"0"}
+        "p0_wr_data": {
+          "signal":"0"
+        },
+        "p1_wr_en": {
+          "signal":"0"
+        },
+        "p0_cmd_byte_addr": {
+          "signal":"0"
+        },
+        "p0_wr_mask": {
+          "signal":"0"
+        },
+        "p0_cmd_bl": {
+          "signal":"0"
+        },
+        "p0_wr_clk": {
+          "signal":"0"
+        },
+        "p1_rd_en": {
+          "signal":"0"
+        },
+        "p2_wr_data": {
+          "signal":"0"
+        },
+        "p2_cmd_byte_addr": {
+          "signal":"0"
+        },
+        "p2_wr_clk": {
+          "signal":"0"
+        },
+        "p1_wr_clk": {
+          "signal":"0"
+        },
+        "p1_cmd_instr": {
+          "signal":"0"
+        },
+        "p1_cmd_bl": {
+          "signal":"0"
+        },
+        "p2_cmd_bl": {
+          "signal":"0"
+        },
+        "p2_wr_mask": {
+          "signal":"0"
+        },
+        "p1_wr_data": {
+          "signal":"0"
+        },
+        "p2_rd_en":{
+          "signal":"0"
+        },
+        "p2_wr_en":{
+          "signal":"0"
+        },
+        "p0_rd_clk":{
+          "signal":"0"
+        },
+        "p1_cmd_byte_addr":{
+          "signal":"0"
+        },
+        "p1_wr_mask":{
+          "signal":"0"
+        },
+        "p0_wr_en":{
+          "signal":"0"
+        },
+        "p1_rd_clk":{
+          "signal":"0"
+        },
+        "p2_rd_clk":{
+          "signal":"0"
+        },
+        "p0_rd_en":{
+          "signal":"0"
+        },
+        "p1_cmd_clk":{
+          "signal":"0"
+        },
+        "p2_cmd_clk":{
+          "signal":"0"
+        },
+        "p0_cmd_instr":{
+          "signal":"0"
+        },
+        "p1_cmd_en":{
+          "signal":"0"
+        },
+        "p2_cmd_instr":{
+          "signal":"0"
+        },
+        "p0_cmd_en":{
+          "signal":"0"
+        },
+        "p0_cmd_clk":{
+          "signal":"0"
+        },
+        "p2_cmd_en":{
+          "signal":"0"
+        }
     }
 }
 
