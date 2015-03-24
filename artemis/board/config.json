@@ -8,5 +8,18 @@
     ],
   "image":"artemis.png",
   "invert_reset":false,
-  "clockrate":100000000
+  "clockrate":100000000,
+  "build_flags":{
+    "bitgen":{
+      "config":{
+        "Binary":"Yes"
+      }
+    },
+    "xst":{
+      "flags":{
+        "-sd":"{cores}",
+        "-netlist_hierarchy":"rebuilt"
+      }
+    }
+  }
 }

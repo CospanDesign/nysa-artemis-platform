@@ -154,32 +154,32 @@ wire              calibration_done;
 wire              usr_clk;
 wire              usr_rst;
 
-wire              cmd_clk,
-wire              cmd_en,
-wire    [2:0]     cmd_instr,
-wire    [5:0]     cmd_bl,
-wire    [29:0]    cmd_byte_addr,
-wire              cmd_empty,
-wire              cmd_full,
+wire              cmd_clk;
+wire              cmd_en;
+wire    [2:0]     cmd_instr;
+wire    [5:0]     cmd_bl;
+wire    [29:0]    cmd_byte_addr;
+wire              cmd_empty;
+wire              cmd_full;
 
-wire              wr_clk,
-wire              wr_en,
-wire    [3:0]     wr_mask,
-wire    [31:0]    wr_data,
-wire              wr_full,
-wire              wr_empty,
-wire    [6:0]     wr_count,
-wire              wr_underrun,
-wire              wr_error,
+wire              wr_clk;
+wire              wr_en;
+wire    [3:0]     wr_mask;
+wire    [31:0]    wr_data;
+wire              wr_full;
+wire              wr_empty;
+wire    [6:0]     wr_count;
+wire              wr_underrun;
+wire              wr_error;
 
-wire              rd_clk,
-wire              rd_en,
-wire    [31:0]    rd_data,
-wire              rd_full,
-wire              rd_empty,
-wire    [6:0]     rd_count,
-wire              rd_overflow,
-wire              rd_error,
+wire              rd_clk;
+wire              rd_en;
+wire    [31:0]    rd_data;
+wire              rd_full;
+wire              rd_empty;
+wire    [6:0]     rd_count;
+wire              rd_overflow;
+wire              rd_error;
 
 
 
@@ -314,41 +314,32 @@ wb_artemis_ddr3 s1(
   .clk               (clk               ),
   .rst               (rst               ),
 
-  .clk_100mhz        (clk_100mhz        ),
-  .calibration_done  (calibration_done  ),
+  .ddr3_cmd_clk      (cmd_clk           ),
+  .ddr3_cmd_en       (cmd_en            ),
+  .ddr3_cmd_instr    (cmd_instr         ),
+  .ddr3_cmd_bl       (cmd_bl            ),
+  .ddr3_cmd_byte_addr(cmd_byte_addr     ),
+  .ddr3_cmd_empty    (cmd_empty         ),
+  .ddr3_cmd_full     (cmd_full          ),
 
-  .usr_clk           (usr_clk           ),
-  .usr_rst           (usr_rst           ),
+  .ddr3_wr_clk       (wr_clk            ),
+  .ddr3_wr_en        (wr_en             ),
+  .ddr3_wr_mask      (wr_mask           ),
+  .ddr3_wr_data      (wr_data           ),
+  .ddr3_wr_full      (wr_full           ),
+  .ddr3_wr_empty     (wr_empty          ),
+  .ddr3_wr_count     (wr_count          ),
+  .ddr3_wr_underrun  (wr_underrun       ),
+  .ddr3_wr_error     (wr_error          ),
 
-
-  .cmd_clk           (cmd_clk           ),
-  .cmd_en            (cmd_en            ),
-  .cmd_instr         (cmd_instr         ),
-  .cmd_bl            (cmd_bl            ),
-  .cmd_byte_addr     (cmd_byte_addr     ),
-  .cmd_empty         (cmd_empty         ),
-  .cmd_full          (cmd_full          ),
-
-  .wr_clk            (wr_clk            ),
-  .wr_en             (wr_en             ),
-  .wr_mask           (wr_mask           ),
-  .wr_data           (wr_data           ),
-  .wr_full           (wr_full           ),
-  .wr_empty          (wr_empty          ),
-  .wr_count          (wr_count          ),
-  .wr_underrun       (wr_underrun       ),
-  .wr_error          (wr_error          ),
-
-  .rd_clk            (rd_clk            ),
-  .rd_en             (rd_en             ),
-  .rd_data           (rd_data           ),
-  .rd_full           (rd_full           ),
-  .rd_empty          (rd_empty          ),
-  .rd_count          (rd_count          ),
-  .rd_overflow       (rd_overflow       ),
-  .rd_error          (rd_error          ),
-
-
+  .ddr3_rd_clk       (rd_clk            ),
+  .ddr3_rd_en        (rd_en             ),
+  .ddr3_rd_data      (rd_data           ),
+  .ddr3_rd_full      (rd_full           ),
+  .ddr3_rd_empty     (rd_empty          ),
+  .ddr3_rd_count     (rd_count          ),
+  .ddr3_rd_overflow  (rd_overflow       ),
+  .ddr3_rd_error     (rd_error          ),
 
   .i_wbs_we          (w_wbs1_we         ),
   .i_wbs_cyc         (w_wbs1_cyc        ),
@@ -394,8 +385,9 @@ wishbone_interconnect wi (
   .i_s1_int          (w_wbs1_int        )
 );
 
+//sim_artemis_ddr3_user adu(
 sim_artemis_ddr3 adu(
-  .clk_100mhz         (clk_100mhz            ),
+  .ddr3_in_clk        (clk_100mhz            ),
   .rst                (rst                   ),
 
   .calibration_done   (calibration_done      ),

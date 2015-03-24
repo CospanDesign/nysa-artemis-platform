@@ -23,7 +23,7 @@ SOFTWARE.
 
 
 module sim_artemis_ddr3 (
-  input               clk_100mhz,
+  input               ddr3_in_clk,
   input               rst,
 
   output              calibration_done,
@@ -257,7 +257,7 @@ always @ (posedge p3_cmd_clk) begin
   else begin
     //Command Stuff
     if (p3_cmd_en && !p3_cmd_full) begin
-        
+
       if ((p3_cmd_instr == CMD_WRITE) || (p3_cmd_instr == CMD_WRITE_PC)) begin
         if (write_data_count  <  p3_cmd_bl) begin
           p3_wr_underrun  <=  1;

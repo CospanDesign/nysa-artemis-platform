@@ -1,9 +1,5 @@
 {
-    "bind":{
-        "rst":{
-            "direction":"input",
-            "loc":"rst"
-        }
+    "board_bind":{
     },
     "MEMORY":{
         "ddr3_mem":{
@@ -18,6 +14,14 @@
                 "clk_100mhz":{
                     "direction":"input",
                     "loc":"clk_100mhz"
+                },
+                "board_rst":{
+                    "direction":"input",
+                    "loc":"board_rst"
+                },
+                "adapter_rst":{
+                    "direction":"input",
+                    "loc":"adapter_rst"
                 },
                 "ddr3_clk_out":{
                     "direction":"output",
@@ -102,7 +106,16 @@
                 ]
         }
     ],
-    "internal_bind":{
+    "board_internal_bind":{
+        "init_rst":{
+            "signal":"startup_rst"
+        },
+        "gpio1_gpio_in[30]":{
+            "signal":"calibration_done"
+        },
+        "gpio1_gpio_in[31]":{
+            "signal":"ddr3_rst"
+        },
         "p3_cmd_clk": {
             "signal":"ddr3_mem_ddr3_cmd_clk"
         },

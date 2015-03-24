@@ -212,8 +212,8 @@ reg [5:0] read_data_count;
 reg [5:0] read_data_size;
 reg [1:0] cmd_count;
 
-parameter RAND_MAX_COUNT = 4
-parameter RAND_MAX_LENGTH = 2
+parameter RAND_MAX_COUNT = 4;
+parameter RAND_MAX_LENGTH = 2;
 
 integer write_full_count;
 integer full_max_length;
@@ -307,7 +307,7 @@ always @ (posedge p3_cmd_clk) begin
         p3_rd_empty     <=  1;
         empty_count     <=  empty_count + 1;
       end
-     
+
       if (p3_rd_en && !p3_rd_empty) begin
         p3_rd_data      <=  p3_rd_data + 1;
         if (p3_rd_data[RAND_MAX_COUNT:0] == read_empty_count) begin

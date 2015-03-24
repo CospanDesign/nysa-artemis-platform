@@ -63,8 +63,8 @@ output  reg   [31:0]        wr_data,      //Data to write into memory
 input                       wr_full,      //Write FIFO is full
 input                       wr_empty,     //Write FIFO is empty
 input         [6:0]         wr_count,     //Number of words in the write FIFO, this is slow to respond
-output  reg                 wr_underrun,  //There isn't enough data to fullfill the memory transaction
-output  reg                 wr_error,     //FIFO pointers are unsynchronized a reset is the only way to recover
+input                       wr_underrun,  //There isn't enough data to fullfill the memory transaction
+input                       wr_error,     //FIFO pointers are unsynchronized a reset is the only way to recover
 
 output                      rd_en,        //Enable a read from memory FIFO
 input         [31:0]        rd_data,      //data read from FIFO

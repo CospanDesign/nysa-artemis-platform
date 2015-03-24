@@ -18,6 +18,7 @@ ${NYSA}/verilog/generic/blk_mem.v
 ${NYSA}/verilog/generic/cross_clock_enable.v
 
 sim/sim_artemis_ddr3.v
+#sim/sim_artemis_ddr3_user.v
 rtl/ddr3_controller.v
 rtl/wb_artemis_ddr3.v
 sim/tb_wishbone_master.v

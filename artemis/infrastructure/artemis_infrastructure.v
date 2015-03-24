@@ -36,9 +36,13 @@ SOFTWARE.
 module artemis_infrastructure (
   input                 clk_100mhz,
   output                clk,
-  input                 rst,
+  input                 init_rst,
   output                calibration_done,
   output                ddr3_rst,
+
+  input                 adapter_rst,
+  input                 board_rst,
+  output                rst,
 
   output                ddr3_clk_out,
   input                 ddr3_clk_in,
@@ -169,7 +173,7 @@ module artemis_infrastructure (
 //Submodules
 artemis_clkgen clkgen(
   .clk_100mhz         (clk_100mhz           ),
-  .rst                (board_rst            ),
+  .rst                (!rst || init_rst     ),
 
   .locked             (locked               ),
 
@@ -179,12 +183,12 @@ artemis_clkgen clkgen(
 
 artemis_ddr3 artemis_ddr3_cntrl(
   .clk_333mhz         (ddr3_clk_in           ),
-  .board_rst          (board_rst             ),
+  .board_rst          (!rst || init_rst      ),
 
   .calibration_done   (calibration_done      ),
 
   .usr_clk            (usr_clk               ),
-  .rst                (rst                   ),
+  .rst                (ddr3_rst              ),
 
   .ddr3_dram_dq       (ddr3_dram_dq          ),
   .ddr3_dram_a        (ddr3_dram_a           ),
@@ -306,8 +310,7 @@ artemis_ddr3 artemis_ddr3_cntrl(
 );
 
 //Asynchronous Logic
-
+assign rst = board_rst && adapter_rst;
 //Synchronous Logic
-
 
 endmodule

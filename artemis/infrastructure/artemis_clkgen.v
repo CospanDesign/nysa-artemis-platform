@@ -15,6 +15,8 @@ wire        clk_100mhz_buf;
 wire        clk_fbout;
 wire        clk_fbout_buf;
 wire        clk_100mhz_out;
+wire        ddr3_clk_pre;
+wire        ddr3_clk_int;
 
 //Submodules
 IBUFG clk_100mhz_ibuf (
@@ -29,8 +31,26 @@ BUFG  clkfb_buf (
 
 BUFG ddr3_clk_obuf     (
   .I                    (ddr3_clk_pre         ),
-  .O                    (ddr3_clk             )
+  .O                    (ddr3_clk_int         )
 );
+
+ODDR2 #(
+	.DDR_ALIGNMENT        ("NONE"),	//Sets output alignment to NON
+	.INIT                 (1'b0),			//Sets the inital state to 0
+	.SRTYPE               ("SYNC")			//Specified "SYNC" or "ASYNC" reset
+)	pad_buf (
+
+	.Q                    (ddr3_clk),
+	.C0                   (ddr3_clk_int),
+	.C1                   (~ddr3_clk_int),
+	.CE                   (1'b1),
+	.D0                   (1'b1),
+	.D1                   (1'b0),
+	.R                    (1'b0),
+	.S                    (1'b0)
+);
+
+
 
 
 PLL_BASE #(
