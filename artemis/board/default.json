@@ -111,28 +111,28 @@
             "signal":"startup_rst"
         },
         "gpio1_gpio_in[22]":{
-            "signal":"p3_rd_full"
+            "signal":"p0_rd_full"
         },
         "gpio1_gpio_in[23]":{
-            "signal":"p3_rd_empty"
+            "signal":"p0_rd_empty"
         },
         "gpio1_gpio_in[24]":{
-            "signal":"p3_rd_overflow"
+            "signal":"p0_rd_overflow"
         },
         "gpio1_gpio_in[25]":{
-            "signal":"p3_rd_error"
+            "signal":"p0_rd_error"
         },
         "gpio1_gpio_in[26]":{
-            "signal":"p3_wr_empty"
+            "signal":"p0_wr_empty"
         },
         "gpio1_gpio_in[27]":{
-            "signal":"p3_wr_full"
+            "signal":"p0_wr_full"
         },
         "gpio1_gpio_in[28]":{
-            "signal":"p3_wr_underrun"
+            "signal":"p0_wr_underrun"
         },
         "gpio1_gpio_in[29]":{
-            "signal":"p3_wr_error"
+            "signal":"p0_wr_error"
         },
         "gpio1_gpio_in[30]":{
             "signal":"calibration_done"
@@ -140,94 +140,95 @@
         "gpio1_gpio_in[31]":{
             "signal":"ddr3_rst"
         },
-        "p3_cmd_clk": {
+        "p0_cmd_clk": {
             "signal":"ddr3_mem_ddr3_cmd_clk"
         },
-        "p3_cmd_en": {
+        "p0_cmd_en": {
             "signal":"ddr3_mem_ddr3_cmd_en"
         },
-        "p3_cmd_instr": {
+        "p0_cmd_instr": {
             "signal":"ddr3_mem_ddr3_cmd_instr"
         },
-        "p3_cmd_bl": {
+        "p0_cmd_bl": {
             "signal":"ddr3_mem_ddr3_cmd_bl"
         },
-        "p3_cmd_byte_addr": {
+        "p0_cmd_byte_addr": {
             "signal":"ddr3_mem_ddr3_cmd_byte_addr"
         },
         "ddr3_mem_ddr3_cmd_empty": {
-            "signal":"p3_cmd_empty"
+            "signal":"p0_cmd_empty"
         },
         "ddr3_mem_ddr3_cmd_full": {
-            "signal":"p3_cmd_full"
+            "signal":"p0_cmd_full"
         },
-        "p3_wr_clk": {
+        "p0_wr_clk": {
             "signal":"ddr3_mem_ddr3_wr_clk"
         },
-        "p3_wr_en": {
+        "p0_wr_en": {
             "signal":"ddr3_mem_ddr3_wr_en"
         },
-        "p3_wr_mask": {
+        "p0_wr_mask": {
             "signal":"ddr3_mem_ddr3_wr_mask"
         },
-        "p3_wr_data": {
+        "p0_wr_data": {
             "signal":"ddr3_mem_ddr3_wr_data"
         },
         "ddr3_mem_ddr3_wr_full": {
-            "signal":"p3_wr_full"
+            "signal":"p0_wr_full"
         },
         "ddr3_mem_ddr3_wr_empty": {
-            "signal":"p3_wr_empty"
+            "signal":"p0_wr_empty"
         },
         "ddr3_mem_ddr3_wr_count": {
-            "signal":"p3_wr_count"
+            "signal":"p0_wr_count"
         },
         "ddr3_mem_ddr3_wr_underrun": {
-            "signal":"p3_wr_underrun"
+            "signal":"p0_wr_underrun"
         },
         "ddr3_mem_ddr3_wr_error": {
-            "signal":"p3_wr_error"
+            "signal":"p0_wr_error"
         },
-        "p3_rd_clk": {
+        "p0_rd_clk": {
             "signal":"ddr3_mem_ddr3_rd_clk"
         },
-        "p3_rd_en": {
+        "p0_rd_en": {
             "signal":"ddr3_mem_ddr3_rd_en"
         },
         "ddr3_mem_ddr3_rd_data": {
-            "signal":"p3_rd_data"
+            "signal":"p0_rd_data"
         },
         "ddr3_mem_ddr3_rd_full": {
-            "signal":"p3_rd_full"
+            "signal":"p0_rd_full"
         },
         "ddr3_mem_ddr3_rd_empty": {
-            "signal":"p3_rd_empty"
+            "signal":"p0_rd_empty"
         },
         "ddr3_mem_ddr3_rd_count": {
-            "signal":"p3_rd_count"
+            "signal":"p0_rd_count"
         },
         "ddr3_mem_ddr3_rd_overflow": {
-            "signal":"p3_rd_overflow"
+            "signal":"p0_rd_overflow"
         },
         "ddr3_mem_ddr3_rd_error": {
-            "signal":"p3_rd_error"
+            "signal":"p0_rd_error"
         },
-        "p0_wr_data": {
+
+        "p3_wr_data": {
           "signal":"0"
         },
         "p1_wr_en": {
           "signal":"0"
         },
-        "p0_cmd_byte_addr": {
+        "p3_cmd_byte_addr": {
           "signal":"0"
         },
-        "p0_wr_mask": {
+        "p3_wr_mask": {
           "signal":"0"
         },
-        "p0_cmd_bl": {
+        "p3_cmd_bl": {
           "signal":"0"
         },
-        "p0_wr_clk": {
+        "p3_wr_clk": {
           "signal":"0"
         },
         "p1_rd_en": {
@@ -266,7 +267,7 @@
         "p2_wr_en":{
           "signal":"0"
         },
-        "p0_rd_clk":{
+        "p3_rd_clk":{
           "signal":"0"
         },
         "p1_cmd_byte_addr":{
@@ -275,7 +276,7 @@
         "p1_wr_mask":{
           "signal":"0"
         },
-        "p0_wr_en":{
+        "p3_wr_en":{
           "signal":"0"
         },
         "p1_rd_clk":{
@@ -284,7 +285,7 @@
         "p2_rd_clk":{
           "signal":"0"
         },
-        "p0_rd_en":{
+        "p3_rd_en":{
           "signal":"0"
         },
         "p1_cmd_clk":{
@@ -293,7 +294,7 @@
         "p2_cmd_clk":{
           "signal":"0"
         },
-        "p0_cmd_instr":{
+        "p3_cmd_instr":{
           "signal":"0"
         },
         "p1_cmd_en":{
@@ -302,10 +303,10 @@
         "p2_cmd_instr":{
           "signal":"0"
         },
-        "p0_cmd_en":{
+        "p3_cmd_en":{
           "signal":"0"
         },
-        "p0_cmd_clk":{
+        "p3_cmd_clk":{
           "signal":"0"
         },
         "p2_cmd_en":{
