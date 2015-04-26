@@ -131,14 +131,6 @@ module artemis_infrastructure (
   output        [6:0]   p2_wr_count,
   output                p2_wr_underrun,
   output                p2_wr_error,
-  input                 p2_rd_clk,
-  input                 p2_rd_en,
-  output        [31:0]  p2_rd_data,
-  output                p2_rd_full,
-  output                p2_rd_empty,
-  output        [6:0]   p2_rd_count,
-  output                p2_rd_overflow,
-  output                p2_rd_error,
 
   input                 p3_cmd_clk,
   input                 p3_cmd_en,
@@ -156,14 +148,39 @@ module artemis_infrastructure (
   output        [6:0]   p3_wr_count,
   output                p3_wr_underrun,
   output                p3_wr_error,
-  input                 p3_rd_clk,
-  input                 p3_rd_en,
-  output        [31:0]  p3_rd_data,
-  output                p3_rd_full,
-  output                p3_rd_empty,
-  output        [6:0]   p3_rd_count,
-  output                p3_rd_overflow,
-  output                p3_rd_error
+
+  input                 p4_cmd_clk,
+  input                 p4_cmd_en,
+  input         [2:0]   p4_cmd_instr,
+  input         [5:0]   p4_cmd_bl,
+  input         [29:0]  p4_cmd_byte_addr,
+  output                p4_cmd_empty,
+  output                p4_cmd_full,
+  input                 p4_rd_clk,
+  input                 p4_rd_en,
+  output        [31:0]  p4_rd_data,
+  output                p4_rd_full,
+  output                p4_rd_empty,
+  output        [6:0]   p4_rd_count,
+  output                p4_rd_overflow,
+  output                p4_rd_error,
+
+  input                 p5_cmd_clk,
+  input                 p5_cmd_en,
+  input         [2:0]   p5_cmd_instr,
+  input         [5:0]   p5_cmd_bl,
+  input         [29:0]  p5_cmd_byte_addr,
+  output                p5_cmd_empty,
+  output                p5_cmd_full,
+  input                 p5_rd_clk,
+  input                 p5_rd_en,
+  output        [31:0]  p5_rd_data,
+  output                p5_rd_full,
+  output                p5_rd_empty,
+  output        [6:0]   p5_rd_count,
+  output                p5_rd_overflow,
+  output                p5_rd_error
+
 );
 
 //Local Parameters
@@ -257,6 +274,8 @@ artemis_ddr3 artemis_ddr3_cntrl(
   .p1_rd_overflow     (p1_rd_overflow        ),
   .p1_rd_error        (p1_rd_error           ),
 
+
+
   .p2_cmd_clk         (p2_cmd_clk            ),
   .p2_cmd_en          (p2_cmd_en             ),
   .p2_cmd_instr       (p2_cmd_instr          ),
@@ -273,16 +292,7 @@ artemis_ddr3 artemis_ddr3_cntrl(
   .p2_wr_count        (p2_wr_count           ),
   .p2_wr_underrun     (p2_wr_underrun        ),
   .p2_wr_error        (p2_wr_error           ),
-  .p2_rd_clk          (p2_rd_clk             ),
-  .p2_rd_en           (p2_rd_en              ),
-  .p2_rd_data         (p2_rd_data            ),
-  .p2_rd_full         (p2_rd_full            ),
-  .p2_rd_empty        (p2_rd_empty           ),
-  .p2_rd_count        (p2_rd_count           ),
-  .p2_rd_overflow     (p2_rd_overflow        ),
-  .p2_rd_error        (p2_rd_error           ),
 
-  //Port 3
   .p3_cmd_clk         (p3_cmd_clk            ),
   .p3_cmd_en          (p3_cmd_en             ),
   .p3_cmd_instr       (p3_cmd_instr          ),
@@ -299,14 +309,39 @@ artemis_ddr3 artemis_ddr3_cntrl(
   .p3_wr_count        (p3_wr_count           ),
   .p3_wr_underrun     (p3_wr_underrun        ),
   .p3_wr_error        (p3_wr_error           ),
-  .p3_rd_clk          (p3_rd_clk             ),
-  .p3_rd_en           (p3_rd_en              ),
-  .p3_rd_data         (p3_rd_data            ),
-  .p3_rd_full         (p3_rd_full            ),
-  .p3_rd_empty        (p3_rd_empty           ),
-  .p3_rd_count        (p3_rd_count           ),
-  .p3_rd_overflow     (p3_rd_overflow        ),
-  .p3_rd_error        (p3_rd_error           )
+
+  .p4_cmd_clk         (p4_cmd_clk            ),
+  .p4_cmd_en          (p4_cmd_en             ),
+  .p4_cmd_instr       (p4_cmd_instr          ),
+  .p4_cmd_bl          (p4_cmd_bl             ),
+  .p4_cmd_byte_addr   (p4_cmd_byte_addr      ),
+  .p4_cmd_empty       (p4_cmd_empty          ),
+  .p4_cmd_full        (p4_cmd_full           ),
+  .p4_rd_clk          (p4_rd_clk             ),
+  .p4_rd_en           (p4_rd_en              ),
+  .p4_rd_data         (p4_rd_data            ),
+  .p4_rd_full         (p4_rd_full            ),
+  .p4_rd_empty        (p4_rd_empty           ),
+  .p4_rd_count        (p4_rd_count           ),
+  .p4_rd_overflow     (p4_rd_overflow        ),
+  .p4_rd_error        (p4_rd_error           ),
+
+  .p5_cmd_clk         (p5_cmd_clk            ),
+  .p5_cmd_en          (p5_cmd_en             ),
+  .p5_cmd_instr       (p5_cmd_instr          ),
+  .p5_cmd_bl          (p5_cmd_bl             ),
+  .p5_cmd_byte_addr   (p5_cmd_byte_addr      ),
+  .p5_cmd_empty       (p5_cmd_empty          ),
+  .p5_cmd_full        (p5_cmd_full           ),
+  .p5_rd_clk          (p5_rd_clk             ),
+  .p5_rd_en           (p5_rd_en              ),
+  .p5_rd_data         (p5_rd_data            ),
+  .p5_rd_full         (p5_rd_full            ),
+  .p5_rd_empty        (p5_rd_empty           ),
+  .p5_rd_count        (p5_rd_count           ),
+  .p5_rd_overflow     (p5_rd_overflow        ),
+  .p5_rd_error        (p5_rd_error           )
+
 );
 
 //Asynchronous Logic
