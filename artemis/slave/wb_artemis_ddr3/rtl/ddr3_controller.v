@@ -167,6 +167,7 @@ ppfifo#(
   .write_fifo_size        (of_write_size                              ),
   .write_strobe           (of_write_strobe                            ),
   .write_data             (rd_data                                    ),
+  //.write_data             (32'h01234567                               ),
 
   .starved                (of_starved                                 ),
 
@@ -213,7 +214,7 @@ always @ (posedge clk) begin
     of_write_activate <=  0;
 
     of_write_count    <=  0;
-    data              <=  0;
+    //data              <=  0;
     local_address     <=  0;
   end
   else begin
@@ -271,7 +272,7 @@ always @ (posedge clk) begin
         //After we sent out all the data o to write command to issue a command to take care of this
         if (if_read_count       < if_read_size) begin
           if (!wr_full) begin
-            data                <=  if_read_data;
+            //data                <=  if_read_data;
             wr_data             <=  if_read_data;
             wr_en               <=  1;
             if_read_count       <=  if_read_count + 1;
@@ -289,7 +290,7 @@ always @ (posedge clk) begin
         if (!cmd_full) begin
           cmd_instr             <=  CMD_WRITE_PC;
           cmd_bl                <=  if_read_count - 1;
-          cmd_word_addr         <=  address;
+          cmd_word_addr         <=  local_address;
           cmd_en                <=  1;
 
           if_read_activate      <=  0;

@@ -149,6 +149,7 @@ ddr3_controller dc(
 
   .if_write_strobe    (if_write_strobe       ),
   .if_write_data      (i_wbs_dat             ),
+  //.if_write_data      (32'h01234567          ),
   .if_write_ready     (if_write_ready        ),
   .if_write_activate  (if_write_activate     ),
   .if_write_fifo_size (if_write_fifo_size    ),
