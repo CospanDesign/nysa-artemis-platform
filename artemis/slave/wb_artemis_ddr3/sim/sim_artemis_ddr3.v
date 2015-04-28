@@ -264,7 +264,7 @@ always @ (posedge p3_cmd_clk) begin
         end
       end
       else if ((p3_cmd_instr == CMD_READ) || (p3_cmd_instr == CMD_READ_PC)) begin
-        read_data_size    <=  p3_cmd_bl;
+        read_data_size    <=  p3_cmd_bl + 1;
       end
       cmd_count       <=  cmd_count + 1;
       if (cmd_timeout == CFIFO_READ_DELAY) begin

@@ -386,7 +386,9 @@ wishbone_interconnect wi (
 );
 
 //sim_artemis_ddr3_user adu(
-sim_artemis_ddr3 adu(
+sim_artemis_ddr3#(
+  .RFIFO_WRITE_DELAY  (1                     )
+)adu(
   .ddr3_in_clk        (clk_100mhz            ),
   .rst                (rst                   ),
 

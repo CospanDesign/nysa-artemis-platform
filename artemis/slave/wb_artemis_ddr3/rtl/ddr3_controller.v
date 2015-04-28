@@ -30,9 +30,10 @@ input                       clk,
 input                       rst,
 
 //Memory Controller Interface
-input         [27:0]        address,
+input         [27:0]        write_address,
 input                       write_en, //set high to initiate a write transaction
                                       //this will not finish until everything in the PPFIFO is empty
+input         [27:0]        read_address,
 input                       read_en,  //set high to start populating the read FIFO, set low to end immediately
 
 //PPFIFO Interface
@@ -158,8 +159,8 @@ ppfifo#(
   .DATA_WIDTH             (32                                         ),
   .ADDRESS_WIDTH          (6                                          )
 )mem_2_user(
-  //.reset                  (rst || of_fifo_reset                       ),
-  .reset                  (rst || !read_en                            ),
+  .reset                  (rst || of_fifo_reset                       ),
+  //.reset                  (rst || !read_en                            ),
 
   //Write
   .write_clock            (clk                                        ),
@@ -251,11 +252,11 @@ always @ (posedge clk) begin
       IDLE: begin
         if (write_en) begin
           state               <=  WRITE_READY;
-          local_address       <=  address;
+          local_address       <=  write_address;
         end
         else if (read_en) begin
           state               <=  READ_READY;
-          local_address       <=  address;
+          local_address       <=  read_address;
         end
       end
       WRITE_READY: begin
@@ -323,7 +324,7 @@ always @ (posedge clk) begin
         end
       end
       READ_DATA: begin
-        if ((of_write_activate > 0) && (of_write_count < (of_write_size - 1))) begin
+        if ((of_write_activate > 0) && (of_write_count < (of_write_size))) begin
           //if (!rd_empty) begin
           read_request          <=  1;
           if (rd_en) begin
@@ -334,7 +335,7 @@ always @ (posedge clk) begin
         end
         else begin
           state                 <=  READ_READY;
-          if ((of_write_activate > 0) && (of_write_count > 0)) begin
+          if ((of_write_activate > 0) && (of_write_count > 0) && (!of_write_strobe)) begin
             of_write_activate   <=  0;
           end
         end

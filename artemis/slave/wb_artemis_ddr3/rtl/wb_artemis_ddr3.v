@@ -143,8 +143,9 @@ ddr3_controller dc(
   .clk                (clk                   ),
   .rst                (rst                   ),
 
-  .address            (i_wbs_adr[27:0]       ),
+  .write_address      (i_wbs_adr[27:0]       ),
   .write_en           (write_en              ),
+  .read_address       (i_wbs_adr[27:0]       ),
   .read_en            (read_en               ),
 
   .if_write_strobe    (if_write_strobe       ),
@@ -248,14 +249,12 @@ always @ (posedge clk) begin
     if (i_wbs_cyc) begin
       if (i_wbs_we) begin
         write_en              <=  1;
-        read_en               <=  0;
-      end                     
-      else begin              
+      end
+      else begin
         read_en               <=  1;
-        write_en              <=  0;
-      end                     
-    end                       
-    else begin                
+      end
+    end
+    else begin
       write_en                <=  0;
       read_en                 <=  0;
       //A transaction has ended
