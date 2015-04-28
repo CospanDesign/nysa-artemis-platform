@@ -247,54 +247,52 @@ always @ (posedge clk) begin
     //A transaction has starting
     if (i_wbs_cyc) begin
       if (i_wbs_we) begin
-        write_en            <=  1;
-      end
-      else begin
-        read_en             <=  1;
-      end
-    end
-    else begin
-      write_en              <=  0;
-      read_en               <=  0;
+        write_en              <=  1;
+        read_en               <=  0;
+      end                     
+      else begin              
+        read_en               <=  1;
+        write_en              <=  0;
+      end                     
+    end                       
+    else begin                
+      write_en                <=  0;
+      read_en                 <=  0;
       //A transaction has ended
       //Close any FIFO that is open
-      if_write_activate     <=  0;
-      of_read_activate      <=  0;
+      if_write_activate       <=  0;
+      of_read_activate        <=  0;
     end
     if ((if_write_activate > 0) && (write_count > 0)&& (if_write_ready > 0)) begin
       //Other side is idle, give it something to do
-      if_write_activate <= 0;
+      if_write_activate       <= 0;
     end
-
-
     //Strobe
-    else if (i_wbs_stb && i_wbs_cyc) begin
-      //master is requesting somethign
-      if (!o_wbs_ack) begin
-        if (write_en) begin
-          //write request
-          if (if_write_activate > 0) begin
-            if (write_count < if_write_fifo_size) begin
-              if_write_strobe <=  1;
-              o_wbs_ack       <=  1;
-              write_count     <=  write_count + 1;
-            end
-            else begin
-              if_write_activate <=  0;
-            end
+    else if (i_wbs_stb && i_wbs_cyc && !o_wbs_ack) begin
+      //master is requesting something
+      if (write_en) begin
+        //write request
+        if (if_write_activate > 0) begin
+          if (write_count < if_write_fifo_size) begin
+            if_write_strobe   <=  1;
+            o_wbs_ack         <=  1;
+            write_count       <=  write_count + 1;
+          end
+          else begin
+            if_write_activate <=  0;
           end
         end
-        else begin
-          //read request
-          if (of_read_activate) begin
-            if (read_count < of_read_size) begin
-              o_wbs_dat         <=  of_read_data;
-              o_wbs_ack         <=  1;
-              of_read_strobe    <=  1;
-            end
-            else begin
-              of_read_activate  <=  0;
-            end
+      end
+      else begin
+        //read request
+        if (of_read_activate) begin
+          if (read_count < of_read_size) begin
+            o_wbs_dat         <=  of_read_data;
+            o_wbs_ack         <=  1;
+            of_read_strobe    <=  1;
+          end
+          else begin
+            of_read_activate  <=  0;
           end
         end
       end

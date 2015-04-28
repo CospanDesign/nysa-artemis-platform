@@ -158,7 +158,8 @@ ppfifo#(
   .DATA_WIDTH             (32                                         ),
   .ADDRESS_WIDTH          (6                                          )
 )mem_2_user(
-  .reset                  (rst || of_fifo_reset                       ),
+  //.reset                  (rst || of_fifo_reset                       ),
+  .reset                  (rst || !read_en                            ),
 
   //Write
   .write_clock            (clk                                        ),
@@ -333,7 +334,9 @@ always @ (posedge clk) begin
         end
         else begin
           state                 <=  READ_READY;
-          of_write_activate     <=  0;
+          if ((of_write_activate > 0) && (of_write_count > 0)) begin
+            of_write_activate   <=  0;
+          end
         end
       end
       default: begin
