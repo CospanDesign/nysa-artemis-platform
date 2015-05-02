@@ -32,11 +32,12 @@ SOFTWARE.
       this needs to be connected to the DDR3 Signals
 */
 
-//`define DDR3_W0_CH
+`define DDR3_W0_CH
 //`define DDR3_W1_CH
-//`define DDR3_R0_CH
+`define DDR3_R0_CH
 //`define DDR3_R1_CH
 //`define DDR3_RW0_CH
+
 
 `unconnected_drive pull0
 
@@ -79,7 +80,7 @@ module artemis_infrastructure (
   input                 w0_write_addr_dec,
   output                w0_write_finished,
   input         [31:0]  w0_write_count,
-  output                w0_write_flush,
+  input                 w0_write_flush,
 
   output        [1:0]   w0_write_ready,
   input         [1:0]   w0_write_activate,
@@ -94,7 +95,7 @@ module artemis_infrastructure (
   input                 w1_write_addr_dec,
   output                w1_write_finished,
   input         [31:0]  w1_write_count,
-  output                w1_write_flush,
+  input                 w1_write_flush,
 
   output        [1:0]   w1_write_ready,
   input         [1:0]   w1_write_activate,
@@ -110,11 +111,11 @@ module artemis_infrastructure (
   output                r0_read_busy,
   output                r0_read_error,
   input         [23:0]  r0_read_count,
-  output                r0_read_flush,
+  input                 r0_read_flush,
 
   output                r0_read_ready,
   input                 r0_read_activate,
-  input         [23:0]  r0_read_size,
+  output        [23:0]  r0_read_size,
   output        [31:0]  r0_read_data,
   input                 r0_read_strobe,
 
@@ -126,11 +127,11 @@ module artemis_infrastructure (
   output                r1_read_busy,
   output                r1_read_error,
   input         [23:0]  r1_read_count,
-  output                r1_read_flush,
+  input                 r1_read_flush,
 
   output                r1_read_ready,
   input                 r1_read_activate,
-  input         [23:0]  r1_read_size,
+  output        [23:0]  r1_read_size,
   output        [31:0]  r1_read_data,
   input                 r1_read_strobe,
 
@@ -142,11 +143,11 @@ module artemis_infrastructure (
   output                rw0_read_busy,
   output                rw0_read_error,
   input         [23:0]  rw0_read_count,
-  output                rw0_read_flush,
+  input                 rw0_read_flush,
 
   output                rw0_read_ready,
   input                 rw0_read_activate,
-  input         [23:0]  rw0_read_size,
+  output        [23:0]  rw0_read_size,
   output        [31:0]  rw0_read_data,
   input                 rw0_read_strobe,
 
@@ -157,7 +158,7 @@ module artemis_infrastructure (
   input                 rw0_write_addr_dec,
   output                rw0_write_finished,
   input         [31:0]  rw0_write_count,
-  output                rw0_write_flush,
+  input                 rw0_write_flush,
 
   output        [1:0]   rw0_write_ready,
   input         [1:0]   rw0_write_activate,
@@ -446,6 +447,8 @@ assign  p2_cmd_clk  =   clk;
 assign  p2_wr_clk   =   clk;
 
 ddr3_dma w0(
+    .clk                (clk                ),
+    .rst                (!rst || init_rst   ),
 
     //Write Side
     .write_enable       (w0_write_enable    ),
@@ -463,26 +466,21 @@ ddr3_dma w0(
     .write_data         (w0_write_data      ),
 
     //Read Side
-    .read_enable        (0                  ),
-    .read_addr          (0                  ),
-    .read_addr_inc      (0                  ),
-    .read_addr_dec      (0                  ),
-    //.read_busy          (                   ),
-    //.read_error         (                   ),
-    .read_count         (0                  ),
-    .read_flush         (0                  ),
+    .read_enable        (1'b0               ),
+    .read_addr          (64'b0              ),
+    .read_addr_inc      (1'b0               ),
+    .read_addr_dec      (1'b0               ),
+    .read_count         (24'b0              ),
+    .read_flush         (1'b0               ),
 
-    //.read_ready         (                   ),
-    .read_activate      (0                  ),
-    //.read_size          (                   ),
-    //.read_data          (                   ),
-    .read_strobe        (0                  ),
+    .read_activate      (1'b0               ),
+    .read_strobe        (1'b0               ),
 
     //Local Registers/Wires
     .cmd_en             (p2_cmd_en          ),
     .cmd_instr          (p2_cmd_instr       ),
     .cmd_bl             (p2_cmd_bl          ),
-    .cmd_word_addr      (p2_cmd_byte_addr   ),
+    .cmd_byte_addr      (p2_cmd_byte_addr   ),
     .cmd_empty          (p2_cmd_empty       ),
     .cmd_full           (p2_cmd_full        ),
 
@@ -493,15 +491,14 @@ ddr3_dma w0(
     .wr_empty           (p2_wr_empty        ),
     .wr_count           (p2_wr_count        ),
     .wr_underrun        (p2_wr_underrun     ),
-    .wr_error           (p2_wr_error        )
+    .wr_error           (p2_wr_error        ),
 
-    //.rd_en              (0                  )
-    //.rd_data            (                   ),
-    //.rd_full            (                   ),
-    //.rd_empty           (                   ),
-    //.rd_count           (                   ),
-    //.rd_overflow        (                   ),
-    //.rd_error           (                   )
+    .rd_data            (32'b0              ),
+    .rd_full            (1'b0               ),
+    .rd_empty           (1'b1               ),
+    .rd_count           (24'b0              ),
+    .rd_overflow        (1'b0               ),
+    .rd_error           (1'b0               )
 );
 `else
 
@@ -519,8 +516,6 @@ assign  w0_write_finished  = 0;
 assign  w0_write_ready     = 0;
 assign  w0_write_size      = 0;
 
-
-
 `endif
 
 `ifdef DDR3_W1_CH
@@ -529,6 +524,8 @@ assign  p3_cmd_clk  =   clk;
 assign  p3_wr_clk   =   clk;
 
 ddr3_dma w1(
+    .clk                (clk                ),
+    .rst                (!rst || init_rst   ),
 
     //Write Side
     .write_enable       (w1_write_enable    ),
@@ -546,26 +543,21 @@ ddr3_dma w1(
     .write_data         (w1_write_data      ),
 
     //Read Side
-    .read_enable        (0                  ),
-    .read_addr          (0                  ),
-    .read_addr_inc      (0                  ),
-    .read_addr_dec      (0                  ),
-    //.read_busy          (                   ),
-    //.read_error         (                   ),
-    .read_count         (0                  ),
-    .read_flush         (0                  ),
+    .read_enable        (1'b0               ),
+    .read_addr          (64'b0              ),
+    .read_addr_inc      (1'b0               ),
+    .read_addr_dec      (1'b0               ),
+    .read_count         (24'b0              ),
+    .read_flush         (1'b0               ),
 
-    //.read_ready         (                   ),
-    .read_activate      (0                  ),
-    //.read_size          (                   ),
-    //.read_data          (                   ),
-    .read_strobe        (0                  ),
+    .read_activate      (1'b0               ),
+    .read_strobe        (1'b0               ),
 
     //Local Registers/Wires
     .cmd_en             (p3_cmd_en          ),
     .cmd_instr          (p3_cmd_instr       ),
     .cmd_bl             (p3_cmd_bl          ),
-    .cmd_word_addr      (p3_cmd_byte_addr   ),
+    .cmd_byte_addr      (p3_cmd_byte_addr   ),
     .cmd_empty          (p3_cmd_empty       ),
     .cmd_full           (p3_cmd_full        ),
 
@@ -576,15 +568,14 @@ ddr3_dma w1(
     .wr_empty           (p3_wr_empty        ),
     .wr_count           (p3_wr_count        ),
     .wr_underrun        (p3_wr_underrun     ),
-    .wr_error           (p3_wr_error        )
+    .wr_error           (p3_wr_error        ),
 
-    //.rd_en              (0                  )
-    //.rd_data            (                   ),
-    //.rd_full            (                   ),
-    //.rd_empty           (                   ),
-    //.rd_count           (                   ),
-    //.rd_overflow        (                   ),
-    //.rd_error           (                   )
+    .rd_data            (32'b0              ),
+    .rd_full            (1'b0               ),
+    .rd_empty           (1'b1               ),
+    .rd_count           (24'b0              ),
+    .rd_overflow        (1'b0               ),
+    .rd_error           (1'b0               )
 );
 `else
 assign  p3_cmd_clk       = 0;
@@ -608,21 +599,19 @@ assign  p4_cmd_clk  =   clk;
 assign  p4_rd_clk   =   clk;
 
 ddr3_dma r0(
+    .clk                (clk                ),
+    .rst                (!rst || init_rst   ),
 
     //Write Side
-    .write_enable       (0                  ),
-    .write_addr         (0                  ),
-    .write_addr_inc     (0                  ),
-    .write_addr_dec     (0                  ),
-    //.write_finished     (                   ),
-    .write_count        (0                  ),
-    //.write_flush        (                   ),
+    .write_enable       (1'b0               ),
+    .write_addr         (64'b0              ),
+    .write_addr_inc     (1'b0               ),
+    .write_addr_dec     (1'b0               ),
+    .write_count        (24'b0              ),
 
-    //.write_ready        (                   ),
-    .write_activate     (0                  ),
-    //.write_size         (                   ),
-    .write_strobe       (0                  ),
-    .write_data         (0                  ),
+    .write_activate     (1'b0               ),
+    .write_strobe       (1'b0               ),
+    .write_data         (32'b0              ),
 
     //Read Side
     .read_enable        (r0_read_enable     ),
@@ -644,25 +633,22 @@ ddr3_dma r0(
     .cmd_en             (p4_cmd_en          ),
     .cmd_instr          (p4_cmd_instr       ),
     .cmd_bl             (p4_cmd_bl          ),
-    .cmd_word_addr      (p4_cmd_byte_addr   ),
+    .cmd_byte_addr      (p4_cmd_byte_addr   ),
     .cmd_empty          (p4_cmd_empty       ),
     .cmd_full           (p4_cmd_full        ),
 
-    //.wr_en              (                   ),
-    //.wr_mask            (0                  ),
-    //.wr_data            (0                  ),
-    //.wr_full            (                   ),
-    //.wr_empty           (                   ),
-    //.wr_count           (0                  ),
-    //.wr_underrun        (                   ),
-    //.wr_error           (                   ),
+    .wr_full            (1'b0               ),
+    .wr_empty           (1'b1               ),
+    .wr_count           (7'b0               ),
+    .wr_underrun        (1'b0               ),
+    .wr_error           (1'b0               ),
 
     .rd_en              (p4_rd_en           ),
     .rd_data            (p4_rd_data         ),
     .rd_full            (p4_rd_full         ),
     .rd_empty           (p4_rd_empty        ),
     .rd_count           (p4_rd_count        ),
-    .rd_overflow        (p4_overflow        ),
+    .rd_overflow        (p4_rd_overflow     ),
     .rd_error           (p4_rd_error        )
 );
 
@@ -689,21 +675,19 @@ assign  p5_cmd_clk  =   clk;
 assign  p5_rd_clk   =   clk;
 
 ddr3_dma r1(
+    .clk                (clk                ),
+    .rst                (!rst || init_rst   ),
 
     //Write Side
-    .write_enable       (0                  ),
-    .write_addr         (0                  ),
-    .write_addr_inc     (0                  ),
-    .write_addr_dec     (0                  ),
-    //.write_finished     (                   ),
-    .write_count        (0                  ),
-    //.write_flush        (                   ),
+    .write_enable       (1'b0               ),
+    .write_addr         (64'b0              ),
+    .write_addr_inc     (1'b0               ),
+    .write_addr_dec     (1'b0               ),
+    .write_count        (24'b0              ),
 
-    //.write_ready        (                   ),
-    .write_activate     (0                  ),
-    //.write_size         (                   ),
-    .write_strobe       (0                  ),
-    .write_data         (0                  ),
+    .write_activate     (1'b0               ),
+    .write_strobe       (1'b0               ),
+    .write_data         (32'b0              ),
 
     //Read Side
     .read_enable        (r1_read_enable     ),
@@ -724,25 +708,22 @@ ddr3_dma r1(
     .cmd_en             (p5_cmd_en          ),
     .cmd_instr          (p5_cmd_instr       ),
     .cmd_bl             (p5_cmd_bl          ),
-    .cmd_word_addr      (p5_cmd_byte_addr   ),
+    .cmd_byte_addr      (p5_cmd_byte_addr   ),
     .cmd_empty          (p5_cmd_empty       ),
     .cmd_full           (p5_cmd_full        ),
 
-    //.wr_en              (0                  ),
-    //.wr_mask            (0                  ),
-    //.wr_data            (0                  ),
-    //.wr_full            (                   ),
-    //.wr_empty           (                   ),
-    //.wr_count           (0                  ),
-    //.wr_underrun        (                   ),
-    //.wr_error           (                   ),
+    .wr_full            (1'b0               ),
+    .wr_empty           (1'b1               ),
+    .wr_count           (7'b0               ),
+    .wr_underrun        (1'b0               ),
+    .wr_error           (1'b0               ),
 
     .rd_en              (p5_rd_en           ),
     .rd_data            (p5_rd_data         ),
     .rd_full            (p5_rd_full         ),
     .rd_empty           (p5_rd_empty        ),
     .rd_count           (p5_rd_count        ),
-    .rd_overflow        (p5_overflow        ),
+    .rd_overflow        (p5_rd_overflow     ),
     .rd_error           (p5_rd_error        )
 );
 
@@ -770,6 +751,8 @@ assign  p1_wr_clk   =   clk;
 assign  p1_rd_clk   =   clk;
 
 ddr3_dma rw0(
+    .clk                (clk                ),
+    .rst                (!rst || init_rst   ),
 
     //Write Side
     .write_enable       (rw0_write_enable   ),
@@ -806,7 +789,7 @@ ddr3_dma rw0(
     .cmd_en             (p1_cmd_en          ),
     .cmd_instr          (p1_cmd_instr       ),
     .cmd_bl             (p1_cmd_bl          ),
-    .cmd_word_addr      (p1_cmd_byte_addr   ),
+    .cmd_byte_addr      (p1_cmd_byte_addr   ),
     .cmd_empty          (p1_cmd_empty       ),
     .cmd_full           (p1_cmd_full        ),
 
@@ -824,7 +807,7 @@ ddr3_dma rw0(
     .rd_full            (p1_rd_full         ),
     .rd_empty           (p1_rd_empty        ),
     .rd_count           (p1_rd_count        ),
-    .rd_overflow        (p1_overflow        ),
+    .rd_overflow        (p1_rd_overflow     ),
     .rd_error           (p1_rd_error        )
 );
 `else

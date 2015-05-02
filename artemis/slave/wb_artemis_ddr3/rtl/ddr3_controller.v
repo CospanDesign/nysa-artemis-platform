@@ -60,7 +60,7 @@ input                       cmd_full,     //Command FIFO full
 
 output  reg                 wr_en,        //Write Data strobe
 output  reg   [3:0]         wr_mask,      //Write Strobe Mask (Not used, always set to 0)
-output  reg   [31:0]        wr_data,      //Data to write into memory
+output        [31:0]        wr_data,      //Data to write into memory
 input                       wr_full,      //Write FIFO is full
 input                       wr_empty,     //Write FIFO is empty
 input         [6:0]         wr_count,     //Number of words in the write FIFO, this is slow to respond
@@ -187,6 +187,7 @@ ppfifo#(
 //Asynchronous Logic
 assign    rd_en           = (read_request & !rd_empty);
 assign    of_write_strobe = rd_en;
+assign    wr_data         = if_read_data;
 
 //Synchronous Logic
 always @ (posedge clk) begin
@@ -200,12 +201,12 @@ always @ (posedge clk) begin
     cmd_word_addr     <=  0;
 
     wr_en             <=  0;  //Strobe data into the write FIFO
-    wr_data           <=  0;  //Data to be sent into the wirte FIFO
+    //wr_data           <=  0;  //Data to be sent into the wirte FIFO
     wr_mask           <=  0;
 
     //rd_en             <=  0;  //Read Strobe
     read_request      <=  0;
-    read_request_count  <=  0;
+    read_request_count<=  0;
 
     if_read_strobe    <=  0;
     if_read_activate  <=  0;
@@ -275,7 +276,7 @@ always @ (posedge clk) begin
         if (if_read_count       < if_read_size) begin
           if (!wr_full) begin
             //data                <=  if_read_data;
-            wr_data             <=  if_read_data;
+            //wr_data             <=  if_read_data;
             wr_en               <=  1;
             if_read_count       <=  if_read_count + 1;
             if_read_strobe      <=  1;

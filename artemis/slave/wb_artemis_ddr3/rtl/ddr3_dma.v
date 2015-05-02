@@ -1,6 +1,8 @@
 
 
 module ddr3_dma(
+    input                                 clk,
+    input                                 rst,
 
     //Write Side
     input                                 write_enable,
@@ -34,29 +36,29 @@ module ddr3_dma(
     input                                 read_strobe,
 
     //Local Registers/Wires
-    output                                cmd_en,       //Command is strobed into controller
-    output        [2:0]                   cmd_instr,    //Instruction
-    output        [5:0]                   cmd_bl,       //Burst Length
-    output        [27:0]                  cmd_word_addr,//Word Address
-    input                                 cmd_empty,    //Command FIFO empty
-    input                                 cmd_full,     //Command FIFO full
+    output                                cmd_en,
+    output        [2:0]                   cmd_instr,
+    output        [5:0]                   cmd_bl,
+    output        [29:0]                  cmd_byte_addr,
+    input                                 cmd_empty,
+    input                                 cmd_full,
 
-    output                                wr_en,        //Write Data strobe
-    output        [3:0]                   wr_mask,      //Write Strobe Mask (Not used, always set to 0)
-    output        [31:0]                  wr_data,      //Data to write into memory
-    input                                 wr_full,      //Write FIFO is full
-    input                                 wr_empty,     //Write FIFO is empty
-    input         [6:0]                   wr_count,     //Number of words in the write FIFO, this is slow to respond
-    input                                 wr_underrun,  //There isn't enough data to fullfill the memory transaction
-    input                                 wr_error,     //FIFO pointers are unsynchronized a reset is the only way to recover
+    output                                wr_en,
+    output        [3:0]                   wr_mask,
+    output        [31:0]                  wr_data,
+    input                                 wr_full,
+    input                                 wr_empty,
+    input         [6:0]                   wr_count,
+    input                                 wr_underrun,
+    input                                 wr_error,
 
-    output                                rd_en,        //Enable a read from memory FIFO
-    input         [31:0]                  rd_data,      //data read from FIFO
-    input                                 rd_full,      //FIFO is full
-    input                                 rd_empty,     //FIFO is empty
-    input         [6:0]                   rd_count,     //Number of elements inside the FIFO (This is slow to respond, so don't use it as a clock to clock estimate of how much data is available
-    input                                 rd_overflow,  //the FIFO is overflowed and data is lost
-    input                                 rd_error      //FIFO pointers are out of sync and a reset is required
+    output                                rd_en,
+    input         [31:0]                  rd_data,
+    input                                 rd_full,
+    input                                 rd_empty,
+    input         [6:0]                   rd_count,
+    input                                 rd_overflow,
+    input                                 rd_error
 );
 
 //Local Parameters
@@ -67,6 +69,7 @@ reg [23:0]  local_write_count;
 
 reg         prev_edge_write_enable;
 wire        posedge_write_enable;
+wire [27:0] cmd_word_addr;
 
 //Sub Modules
 //Submodules
@@ -124,40 +127,33 @@ ddr3_controller dc(
 
 //Asynchroous Logic
 
-assign      read_busy           = read_enable;
-assign      read_error          = 0;
-assign      posege_write_enable = (!prev_edge_write_enable & write_enable);
+assign      read_busy            = read_enable;
+assign      read_error           = 0;
+assign      posedge_write_enable = !prev_edge_write_enable && write_enable;
+assign      cmd_byte_addr        = {cmd_word_addr, 2'b0};
 
 //Synchronous Logic
 always @ (posedge clk) begin
   if (rst) begin
-    local_write_size        <= 0;
+    //local_write_size        <= 0;
     local_write_count       <= 0;
     write_finished          <= 0;
     prev_edge_write_enable  <= 0;
   end
   else begin
-    if (!write_enable) begin
-      //Reset Everything
-      local_write_size      <= 0;
-      local_write_count     <= 0;
-      write_finished        <= 0;
-    end
-    else begin
-      if (posedge_write_enable) begin
-        local_write_size    <= write_count;
-      end
-
-      //Write Strobe
+    if (write_count > 0) begin
       if (write_strobe) begin
         local_write_count   <= local_write_count + 1;
       end
-
-      //write finished
-      if (local_write_count >= local_write_size) begin
+      if (local_write_count >= write_count) begin
         write_finished      <=  1;
       end
     end
+    else begin
+      write_finished        <= 0;
+      local_write_count     <= 0;
+    end
+
     prev_edge_write_enable  <=  write_enable;
   end
 end
