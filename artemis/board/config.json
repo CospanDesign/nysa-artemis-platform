@@ -21,5 +21,6 @@
         "-netlist_hierarchy":"rebuilt"
       }
     }
-  }
+  },
+  "required":"required.json"
 }
