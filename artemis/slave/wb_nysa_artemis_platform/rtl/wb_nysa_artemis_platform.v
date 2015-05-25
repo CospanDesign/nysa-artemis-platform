@@ -66,10 +66,10 @@ SOFTWARE.
 `unconnected_drive pull0
 
 module wb_nysa_artemis_platform #(
-  parameter DDR3_W0_CH = 0,
-  parameter DDR3_R0_CH = 0,
-  parameter DDR3_W1_CH = 0,
-  parameter DDR3_R1_CH = 0,
+  parameter DDR3_W0_CH  = 0,
+  parameter DDR3_R0_CH  = 0,
+  parameter DDR3_W1_CH  = 0,
+  parameter DDR3_R1_CH  = 0,
   parameter DDR3_RW0_CH = 0
 )(
   output                clk,
@@ -92,12 +92,10 @@ module wb_nysa_artemis_platform #(
   //output              o_wbs_int
 
   input                 clk_100mhz,
-  input                 init_rst,
   output                calibration_done,
   output                ddr3_rst,
 
   input                 adapter_rst,
-  input                 board_rst,
 
   output                ddr3_clk_out,
   input                 ddr3_clk_in,
@@ -341,7 +339,7 @@ wire                    p5_rd_error;
 //Submodules
 artemis_clkgen clkgen(
   .clk_100mhz         (clk_100mhz           ),
-  .rst                (rst || init_rst      ),
+  .rst                (rst                  ),
 
   .locked             (locked               ),
 
@@ -351,7 +349,7 @@ artemis_clkgen clkgen(
 
 artemis_ddr3 artemis_ddr3_cntrl(
   .clk_333mhz         (ddr3_clk_in           ),
-  .board_rst          (rst || init_rst       ),
+  .board_rst          (rst                   ),
 
   .calibration_done   (calibration_done      ),
 
@@ -498,7 +496,7 @@ if (DDR3_W0_CH) begin
 
   ddr3_dma w0(
       .clk                (clk                ),
-      .rst                (rst || init_rst    ),
+      .rst                (rst                ),
 
       //Write Side
       .write_enable       (w0_write_enable    ),
@@ -576,7 +574,7 @@ if (DDR3_W1_CH) begin
 
   ddr3_dma w1(
       .clk                (clk                ),
-      .rst                (rst || init_rst    ),
+      .rst                (rst                ),
 
       //Write Side
       .write_enable       (w1_write_enable    ),
@@ -651,7 +649,7 @@ if (DDR3_R0_CH) begin
 
   ddr3_dma r0(
       .clk                (clk                ),
-      .rst                (rst || init_rst    ),
+      .rst                (rst                ),
 
       //Write Side
       .write_enable       (1'b0               ),
@@ -726,7 +724,7 @@ if (DDR3_R1_CH) begin
 
   ddr3_dma r1(
       .clk                (clk                ),
-      .rst                (rst || init_rst    ),
+      .rst                (rst                ),
 
       //Write Side
       .write_enable       (1'b0               ),
@@ -801,7 +799,7 @@ if (DDR3_RW0_CH) begin
 
   ddr3_dma rw0(
       .clk                (clk                ),
-      .rst                (rst || init_rst    ),
+      .rst                (rst                ),
 
       //Write Side
       .write_enable       (rw0_write_enable   ),

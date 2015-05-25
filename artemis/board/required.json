@@ -1,5 +1,9 @@
 {
   "board_bind":{
+    "rst":{
+        "direction":"input",
+        "loc":"rst"
+    }
   },
   "MEMORY":{
     "ddr3_mem":{
@@ -13,10 +17,6 @@
         "clk_100mhz":{
           "direction":"input",
           "loc":"clk_100mhz"
-        },
-        "board_rst":{
-          "direction":"input",
-          "loc":"board_rst"
         },
         "adapter_rst":{
           "direction":"input",
@@ -101,9 +101,6 @@
     }
   },
   "board_internal_bind":{
-    "init_rst":{
-      "signal":"startup_rst"
-    },
     "gpio1_gpio_in[22]":{
       "signal":"artemis_p0_rd_full"
     },
@@ -208,9 +205,6 @@
     }
   },
   "board_internal_bind":{
-    "init_rst":{
-      "signal":"startup_rst"
-    },
     "gpio1_gpio_in[22]":{
       "signal":"artemis_p0_rd_full"
     },
