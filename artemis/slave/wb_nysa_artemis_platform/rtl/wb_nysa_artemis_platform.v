@@ -240,11 +240,71 @@ module wb_nysa_artemis_platform #(
 );
 
 //Local Parameters
-localparam     ADDR_0  = 32'h00000000;
-localparam     ADDR_1  = 32'h00000001;
-localparam     ADDR_2  = 32'h00000002;
+localparam      CONTROL                 = 32'h00000000;
+localparam      BIT_CALIBRATION_DONE    = 0;
+localparam      BIT_DDR3_RST            = 1;
+localparam      BIT_P0_ENABLE           = 2;
+localparam      BIT_P1_ENABLE           = 3;
+localparam      BIT_P2_ENABLE           = 4;
+localparam      BIT_P3_ENABLE           = 5;
+localparam      BIT_P4_ENABLE           = 6;
+localparam      BIT_P5_ENABLE           = 7;
+
+localparam      DDR3_STATUS0            = 32'h00000001;
+
+localparam      BIT_P0_RD_FULL          = 0;
+localparam      BIT_P0_RD_EMPTY         = 1;
+localparam      BIT_P0_RD_OVERFLOW      = 2;
+localparam      BIT_P0_RD_ERROR         = 3;
+localparam      BIT_P0_WR_EMPTY         = 4;
+localparam      BIT_P0_WR_FULL          = 5;
+localparam      BIT_P0_WR_UNDERRUN      = 6;
+
+localparam      BIT_P1_RD_FULL          = 0 + 8;
+localparam      BIT_P1_RD_EMPTY         = 1 + 8;
+localparam      BIT_P1_RD_OVERFLOW      = 2 + 8;
+localparam      BIT_P1_RD_ERROR         = 3 + 8;
+localparam      BIT_P1_WR_EMPTY         = 4 + 8;
+localparam      BIT_P1_WR_FULL          = 5 + 8;
+localparam      BIT_P1_WR_UNDERRUN      = 6 + 8;
+
+localparam      BIT_P2_RD_FULL          = 0 + 16;
+localparam      BIT_P2_RD_EMPTY         = 1 + 16;
+localparam      BIT_P2_RD_OVERFLOW      = 2 + 16;
+localparam      BIT_P2_RD_ERROR         = 3 + 16;
+localparam      BIT_P2_WR_EMPTY         = 4 + 16;
+localparam      BIT_P2_WR_FULL          = 5 + 16;
+localparam      BIT_P2_WR_UNDERRUN      = 6 + 16;
+
+localparam      BIT_P3_RD_FULL          = 0 + 24;
+localparam      BIT_P3_RD_EMPTY         = 1 + 24;
+localparam      BIT_P3_RD_OVERFLOW      = 2 + 24;
+localparam      BIT_P3_RD_ERROR         = 3 + 24;
+localparam      BIT_P3_WR_EMPTY         = 4 + 24;
+localparam      BIT_P3_WR_FULL          = 5 + 24;
+localparam      BIT_P3_WR_UNDERRUN      = 6 + 24;
+
+localparam      DDR3_STATUS1            = 32'h00000002;
+
+localparam      BIT_P4_RD_FULL          = 0;
+localparam      BIT_P4_RD_EMPTY         = 1;
+localparam      BIT_P4_RD_OVERFLOW      = 2;
+localparam      BIT_P4_RD_ERROR         = 3;
+localparam      BIT_P4_WR_EMPTY         = 4;
+localparam      BIT_P4_WR_FULL          = 5;
+localparam      BIT_P4_WR_UNDERRUN      = 6;
+
+
+localparam      BIT_P5_RD_FULL          = 0 + 8;
+localparam      BIT_P5_RD_EMPTY         = 1 + 8;
+localparam      BIT_P5_RD_OVERFLOW      = 2 + 8;
+localparam      BIT_P5_RD_ERROR         = 3 + 8;
+localparam      BIT_P5_WR_EMPTY         = 4 + 8;
+localparam      BIT_P5_WR_FULL          = 5 + 8;
+localparam      BIT_P5_WR_UNDERRUN      = 6 + 8;
 
 //Local Registers/Wires
+
 wire                    p1_cmd_clk;
 wire                    p1_cmd_en;
 wire            [2:0]   p1_cmd_instr;
@@ -884,6 +944,7 @@ else begin
 
 end
 
+
 //Synchronous Logic
 always @ (posedge clk) begin
   if (rst) begin
@@ -904,31 +965,8 @@ always @ (posedge clk) begin
         if (i_wbs_we) begin
           //write request
           case (i_wbs_adr)
-            ADDR_0: begin
-              //writing something to address 0
-              //do something
-
-              //NOTE THE FOLLOWING LINE IS AN EXAMPLE
-              //  THIS IS WHAT THE USER WILL READ FROM ADDRESS 0
-              $display("ADDR: %h user wrote %h", i_wbs_adr, i_wbs_dat);
+            CONTROL: begin
             end
-            ADDR_1: begin
-              //writing something to address 1
-              //do something
-
-              //NOTE THE FOLLOWING LINE IS AN EXAMPLE
-              //  THIS IS WHAT THE USER WILL READ FROM ADDRESS 0
-              $display("ADDR: %h user wrote %h", i_wbs_adr, i_wbs_dat);
-            end
-            ADDR_2: begin
-              //writing something to address 3
-              //do something
-
-              //NOTE THE FOLLOWING LINE IS AN EXAMPLE
-              //  THIS IS WHAT THE USER WILL READ FROM ADDRESS 0
-              $display("ADDR: %h user wrote %h", i_wbs_adr, i_wbs_dat);
-            end
-            //add as many ADDR_X you need here
             default: begin
             end
           endcase
@@ -936,28 +974,69 @@ always @ (posedge clk) begin
         else begin
           //read request
           case (i_wbs_adr)
-            ADDR_0: begin
-              //reading something from address 0
-              //NOTE THE FOLLOWING LINE IS AN EXAMPLE
-              //  THIS IS WHAT THE USER WILL READ FROM ADDRESS 0
-              $display("user read %h", ADDR_0);
-              o_wbs_dat <= ADDR_0;
+            CONTROL: begin
+                o_wbs_dat                       <= 32'h00;
+                o_wbs_dat[BIT_CALIBRATION_DONE] <= calibration_done;
+                o_wbs_dat[BIT_DDR3_RST]         <= ddr3_rst;
+                o_wbs_dat[BIT_P0_ENABLE]        <= 1;
+                o_wbs_dat[BIT_P1_ENABLE]        <= DDR3_RW0_CH;
+                o_wbs_dat[BIT_P2_ENABLE]        <= DDR3_W0_CH;
+                o_wbs_dat[BIT_P3_ENABLE]        <= DDR3_W1_CH;
+                o_wbs_dat[BIT_P4_ENABLE]        <= DDR3_R0_CH;
+                o_wbs_dat[BIT_P5_ENABLE]        <= DDR3_R1_CH;
             end
-            ADDR_1: begin
-              //reading something from address 1
-              //NOTE THE FOLLOWING LINE IS AN EXAMPLE
-              //  THIS IS WHAT THE USER WILL READ FROM ADDRESS 0
-              $display("user read %h", ADDR_1);
-              o_wbs_dat <= ADDR_1;
+            DDR3_STATUS0: begin
+                o_wbs_dat                       <= 0;
+                o_wbs_dat[BIT_P0_RD_FULL]       <= p0_rd_full;
+                o_wbs_dat[BIT_P0_RD_EMPTY]      <= p0_rd_empty;
+                o_wbs_dat[BIT_P0_RD_OVERFLOW]   <= p0_rd_overflow;
+                o_wbs_dat[BIT_P0_RD_ERROR]      <= p0_rd_error;
+                o_wbs_dat[BIT_P0_WR_EMPTY]      <= p0_wr_empty;
+                o_wbs_dat[BIT_P0_WR_FULL]       <= p0_wr_full;
+                o_wbs_dat[BIT_P0_WR_UNDERRUN]   <= p0_wr_underrun;
+
+                o_wbs_dat[BIT_P1_RD_FULL]       <= p1_rd_full;
+                o_wbs_dat[BIT_P1_RD_EMPTY]      <= p1_rd_empty;
+                o_wbs_dat[BIT_P1_RD_OVERFLOW]   <= p1_rd_overflow;
+                o_wbs_dat[BIT_P1_RD_ERROR]      <= p1_rd_error;
+                o_wbs_dat[BIT_P1_WR_EMPTY]      <= p1_wr_empty;
+                o_wbs_dat[BIT_P1_WR_FULL]       <= p1_wr_full;
+                o_wbs_dat[BIT_P1_WR_UNDERRUN]   <= p1_wr_underrun;
+
+                o_wbs_dat[BIT_P2_RD_FULL]       <= 1'b0;
+                o_wbs_dat[BIT_P2_RD_EMPTY]      <= 1'b0;
+                o_wbs_dat[BIT_P2_RD_OVERFLOW]   <= 1'b0;
+                o_wbs_dat[BIT_P2_RD_ERROR]      <= 1'b0;
+                o_wbs_dat[BIT_P2_WR_EMPTY]      <= p2_wr_empty;
+                o_wbs_dat[BIT_P2_WR_FULL]       <= p2_wr_full;
+                o_wbs_dat[BIT_P2_WR_UNDERRUN]   <= p2_wr_underrun;
+
+                o_wbs_dat[BIT_P3_RD_FULL]       <= 1'b0;
+                o_wbs_dat[BIT_P3_RD_EMPTY]      <= 1'b0;
+                o_wbs_dat[BIT_P3_RD_OVERFLOW]   <= 1'b0;
+                o_wbs_dat[BIT_P3_RD_ERROR]      <= 1'b0;
+                o_wbs_dat[BIT_P3_WR_EMPTY]      <= p3_wr_empty;
+                o_wbs_dat[BIT_P3_WR_FULL]       <= p3_wr_full;
+                o_wbs_dat[BIT_P3_WR_UNDERRUN]   <= p3_wr_underrun;
             end
-            ADDR_2: begin
-              //reading soething from address 2
-              //NOTE THE FOLLOWING LINE IS AN EXAMPLE
-              //  THIS IS WHAT THE USER WILL READ FROM ADDRESS 0
-              $display("user read %h", ADDR_2);
-              o_wbs_dat <= ADDR_2;
+            DDR3_STATUS1: begin
+                o_wbs_dat                       <= 0;
+                o_wbs_dat[BIT_P4_RD_FULL]       <= p4_rd_full;
+                o_wbs_dat[BIT_P4_RD_EMPTY]      <= p4_rd_empty;
+                o_wbs_dat[BIT_P4_RD_OVERFLOW]   <= p4_rd_overflow;
+                o_wbs_dat[BIT_P4_RD_ERROR]      <= p4_rd_error;
+                o_wbs_dat[BIT_P4_WR_EMPTY]      <= 1'b0;
+                o_wbs_dat[BIT_P4_WR_FULL]       <= 1'b0;
+                o_wbs_dat[BIT_P4_WR_UNDERRUN]   <= 1'b0; 
+
+                o_wbs_dat[BIT_P5_RD_FULL]       <= p5_rd_full;
+                o_wbs_dat[BIT_P5_RD_EMPTY]      <= p5_rd_empty;
+                o_wbs_dat[BIT_P5_RD_OVERFLOW]   <= p5_rd_overflow;
+                o_wbs_dat[BIT_P5_RD_ERROR]      <= p5_rd_error;
+                o_wbs_dat[BIT_P5_WR_EMPTY]      <= 1'b0; 
+                o_wbs_dat[BIT_P5_WR_FULL]       <= 1'b0; 
+                o_wbs_dat[BIT_P5_WR_UNDERRUN]   <= 1'b0;
             end
-            //add as many ADDR_X you need here
             default: begin
             end
           endcase

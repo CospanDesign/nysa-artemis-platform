@@ -101,36 +101,6 @@
     }
   },
   "board_internal_bind":{
-    "gpio1_gpio_in[22]":{
-      "signal":"artemis_p0_rd_full"
-    },
-    "gpio1_gpio_in[23]":{
-      "signal":"artemis_p0_rd_empty"
-    },
-    "gpio1_gpio_in[24]":{
-      "signal":"artemis_p0_rd_overflow"
-    },
-    "gpio1_gpio_in[25]":{
-      "signal":"artemis_p0_rd_error"
-    },
-    "gpio1_gpio_in[26]":{
-      "signal":"artemis_p0_wr_empty"
-    },
-    "gpio1_gpio_in[27]":{
-      "signal":"artemis_p0_wr_full"
-    },
-    "gpio1_gpio_in[28]":{
-      "signal":"artemis_p0_wr_underrun"
-    },
-    "gpio1_gpio_in[29]":{
-      "signal":"artemis_p0_wr_error"
-    },
-    "gpio1_gpio_in[30]":{
-      "signal":"calibration_done"
-    },
-    "gpio1_gpio_in[31]":{
-      "signal":"artemis_ddr3_rst"
-    },
     "artemis_p0_cmd_clk": {
       "signal":"ddr3_mem_ddr3_cmd_clk"
     },
