@@ -71,6 +71,7 @@ PLL_BASE #(
   .CLKFBOUT             (clk_fbout            ),
 //  .CLKOUT0              (ddr3_clk             ),
   .CLKOUT0              (ddr3_clk_pre         ),
+  .CLKOUT1              (                     ),
   .CLKOUT2              (                     ),
   .CLKOUT3              (                     ),
   .CLKOUT4              (                     ),

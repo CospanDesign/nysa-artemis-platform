@@ -135,7 +135,7 @@ class ArtemisDriver(driver.Driver):
     def __del__(self):
         pass
 
-    def is_ddr3_calibrate_done(self):
+    def is_ddr3_calibration_done(self):
         """
         Returns True if DDR3 Calibration is Done
 
@@ -148,7 +148,7 @@ class ArtemisDriver(driver.Driver):
         Raises:
             Nothing
         """
-        return self.nysa.read_register_bit_set(CONTROL, BIT_CALIBRATION_DONE)
+        return self.is_register_bit_set(CONTROL, BIT_CALIBRATION_DONE)
 
     def is_ddr3_rst(self):
         """
@@ -164,7 +164,7 @@ class ArtemisDriver(driver.Driver):
         Raises:
             Nothing
         """
-        return self.nysa.read_register_bit_set(CONTROL, BIT_DDR3_RST)
+        return self.is_register_bit_set(CONTROL, BIT_DDR3_RST)
 
     def get_ddr3_channel_enable(self):
         """
@@ -187,7 +187,7 @@ class ArtemisDriver(driver.Driver):
         Raises:
             Nothing
         """
-        regs = self.nysa.read_register(CONTROL)
+        regs = self.read_register(CONTROL)
         regs = regs >> BIT_P0_ENABLE;
         return (regs & 0x3F)
 
@@ -218,11 +218,11 @@ class ArtemisDriver(driver.Driver):
             Nothing
         """
         if channel < 4:
-            regs = self.nysa.read_register(DDR3_STATUS1)
+            regs = self.read_register(DDR3_STATUS1)
             regs >> (channel) * 8
             return (regs & 0x3F)
         else:
-            regs = self.nysa.read_register(DDR3_STATUS1)
+            regs = self.read_register(DDR3_STATUS1)
             regs >> (channel - 4) * 8
             return (regs & 0x3F)
 

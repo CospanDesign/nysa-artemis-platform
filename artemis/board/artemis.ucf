@@ -4,13 +4,17 @@
 #NET "clk_100mhz"     LOC = G9;
 #TIMESPEC "ts_100mhz_clk" = PERIOD "clk_100mhz" 10 ns HIGH 50%;
 NET clk_100mhz     LOC = G9 | IOSTANDARD = LVCMOS33;
-NET clk_100mhz     TNM=clk_100mhz;
-TIMESPEC ts_100mhz_clk = PERIOD clk_100mhz 10 ns HIGH 50%;
+NET clk     TNM= "tnm_clk";
+TIMESPEC "ts_clk" = PERIOD "tnm_clk" 10 ns HIGH 50%;
+
+NET ddr3_clk_in   LOC = P3 | IOSTANDARD = LVCMOS15;
+NET ddr3_clk_in   TNM="tnm_ddr3_clk_in";
+TIMESPEC ts_ddr3_clk_in = PERIOD "tnm_ddr3_clk_in" 3 ns HIGH 50%;
 
 NET ddr3_clk_out  LOC = P4 | IOSTANDARD = LVCMOS15;
-NET ddr3_clk_in   LOC = P3 | IOSTANDARD = LVCMOS15;
-NET ddr3_clk_in   TNM=ddr3_clk_in;
-TIMESPEC ts_ddr3_clk_in = PERIOD ddr3_clk_in 3 ns HIGH 50%;
+NET ddr3_clk_out   TNM="tnm_ddr3_clk_out";
+TIMESPEC ts_ddr3_clk_out = PERIOD "tnm_ddr3_clk_out" 3 ns HIGH 50%;
+
 #DDR3 Clock Loopback
 
 CONFIG VCCAUX = 3.3;

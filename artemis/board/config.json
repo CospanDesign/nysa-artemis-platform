@@ -12,7 +12,8 @@
   "build_flags":{
     "bitgen":{
       "config":{
-        "Binary":"Yes"
+        "Binary":"Yes",
+        "INIT_9K":"Yes"
       }
     },
     "xst":{
@@ -20,6 +21,11 @@
         "-sd":"{cores}",
         "-netlist_hierarchy":"rebuilt"
       }
+    },
+    "map":{
+        "flags":{
+            "-convert_bram8":""
+        }
     }
   },
   "required":"required.json"

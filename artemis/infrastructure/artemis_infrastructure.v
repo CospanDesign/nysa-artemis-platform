@@ -823,7 +823,7 @@ assign  p1_wr_clk           = 0;
 assign  p1_wr_mask          = 0;
 assign  p1_rd_clk           = 0;
 assign  p1_rd_en            = 0;
-                            
+
 assign  rw0_read_busy       = 0;
 assign  rw0_read_error      = 0;
 assign  rw0_read_ready      = 0;

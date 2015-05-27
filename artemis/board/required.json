@@ -18,11 +18,7 @@
           "direction":"input",
           "loc":"clk_100mhz"
         },
-        "adapter_rst":{
-          "direction":"input",
-          "loc":"adapter_rst"
-        },
-        "ddr3_clk_out":{
+          "ddr3_clk_out":{
           "direction":"output",
           "loc":"ddr3_clk_out"
         },
@@ -173,111 +169,6 @@
     "ddr3_mem_ddr3_rd_error": {
       "signal":"artemis_p0_rd_error"
     }
-  },
-  "board_internal_bind":{
-    "gpio1_gpio_in[22]":{
-      "signal":"artemis_p0_rd_full"
-    },
-    "gpio1_gpio_in[23]":{
-      "signal":"artemis_p0_rd_empty"
-    },
-    "gpio1_gpio_in[24]":{
-      "signal":"artemis_p0_rd_overflow"
-    },
-    "gpio1_gpio_in[25]":{
-      "signal":"artemis_p0_rd_error"
-    },
-    "gpio1_gpio_in[26]":{
-      "signal":"artemis_p0_wr_empty"
-    },
-    "gpio1_gpio_in[27]":{
-      "signal":"artemis_p0_wr_full"
-    },
-    "gpio1_gpio_in[28]":{
-      "signal":"artemis_p0_wr_underrun"
-    },
-    "gpio1_gpio_in[29]":{
-      "signal":"artemis_p0_wr_error"
-    },
-    "gpio1_gpio_in[30]":{
-      "signal":"artemis_calibration_done"
-    },
-    "gpio1_gpio_in[31]":{
-      "signal":"artemis_ddr3_rst"
-    },
-    "artemis_p0_cmd_clk": {
-      "signal":"ddr3_mem_ddr3_cmd_clk"
-    },
-    "artemis_p0_cmd_en": {
-      "signal":"ddr3_mem_ddr3_cmd_en"
-    },
-    "artemis_p0_cmd_instr": {
-      "signal":"ddr3_mem_ddr3_cmd_instr"
-    },
-    "artemis_p0_cmd_bl": {
-      "signal":"ddr3_mem_ddr3_cmd_bl"
-    },
-    "artemis_p0_cmd_byte_addr": {
-      "signal":"ddr3_mem_ddr3_cmd_byte_addr"
-    },
-    "ddr3_mem_ddr3_cmd_empty": {
-      "signal":"artemis_p0_cmd_empty"
-    },
-    "ddr3_mem_ddr3_cmd_full": {
-      "signal":"artemis_p0_cmd_full"
-    },
-    "artemis_p0_wr_clk": {
-      "signal":"ddr3_mem_ddr3_wr_clk"
-    },
-    "artemis_p0_wr_en": {
-      "signal":"ddr3_mem_ddr3_wr_en"
-    },
-    "artemis_p0_wr_mask": {
-      "signal":"ddr3_mem_ddr3_wr_mask"
-    },
-    "artemis_p0_wr_data": {
-      "signal":"ddr3_mem_ddr3_wr_data"
-    },
-    "ddr3_mem_ddr3_wr_full": {
-      "signal":"artemis_p0_wr_full"
-    },
-    "ddr3_mem_ddr3_wr_empty": {
-      "signal":"artemis_p0_wr_empty"
-    },
-    "ddr3_mem_ddr3_wr_count": {
-      "signal":"artemis_p0_wr_count"
-    },
-    "ddr3_mem_ddr3_wr_underrun": {
-      "signal":"artemis_p0_wr_underrun"
-    },
-    "ddr3_mem_ddr3_wr_error": {
-      "signal":"artemis_p0_wr_error"
-    },
-    "artemis_p0_rd_clk": {
-      "signal":"ddr3_mem_ddr3_rd_clk"
-    },
-    "artemis_p0_rd_en": {
-      "signal":"ddr3_mem_ddr3_rd_en"
-    },
-    "ddr3_mem_ddr3_rd_data": {
-      "signal":"artemis_p0_rd_data"
-    },
-    "ddr3_mem_ddr3_rd_full": {
-      "signal":"artemis_p0_rd_full"
-    },
-    "ddr3_mem_ddr3_rd_empty": {
-      "signal":"artemis_p0_rd_empty"
-    },
-    "ddr3_mem_ddr3_rd_count": {
-      "signal":"artemis_p0_rd_count"
-    },
-    "ddr3_mem_ddr3_rd_overflow": {
-      "signal":"artemis_p0_rd_overflow"
-    },
-    "ddr3_mem_ddr3_rd_error": {
-      "signal":"artemis_p0_rd_error"
-    }
   }
-
 }
 

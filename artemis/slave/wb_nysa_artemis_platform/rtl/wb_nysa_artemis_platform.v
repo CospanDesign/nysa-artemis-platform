@@ -95,8 +95,6 @@ module wb_nysa_artemis_platform #(
   output                calibration_done,
   output                ddr3_rst,
 
-  input                 adapter_rst,
-
   output                ddr3_clk_out,
   input                 ddr3_clk_in,
 
@@ -305,6 +303,8 @@ localparam      BIT_P5_WR_UNDERRUN      = 6 + 8;
 
 //Local Registers/Wires
 
+wire                    pll_locked;
+
 wire                    p1_cmd_clk;
 wire                    p1_cmd_en;
 wire            [2:0]   p1_cmd_instr;
@@ -395,13 +395,17 @@ wire                    p5_rd_empty;
 wire            [6:0]   p5_rd_count;
 wire                    p5_rd_overflow;
 wire                    p5_rd_error;
+wire                    usr_clk;
+
+reg                     ddr3_rst_in;
+reg             [15:0]  ddr3_rst_in_count;
 
 //Submodules
 artemis_clkgen clkgen(
   .clk_100mhz         (clk_100mhz           ),
   .rst                (rst                  ),
 
-  .locked             (locked               ),
+  .locked             (pll_locked           ),
 
   .clk                (clk                  ),
   .ddr3_clk           (ddr3_clk_out         )
@@ -409,7 +413,8 @@ artemis_clkgen clkgen(
 
 artemis_ddr3 artemis_ddr3_cntrl(
   .clk_333mhz         (ddr3_clk_in           ),
-  .board_rst          (rst                   ),
+  //.board_rst          (rst  || !pll_locked   ),
+  .board_rst          (ddr3_rst_in           ),
 
   .calibration_done   (calibration_done      ),
 
@@ -1045,6 +1050,22 @@ always @ (posedge clk) begin
     end
     end
   end
+end
+
+always @ (posedge clk) begin
+    if (rst || !pll_locked) begin
+        ddr3_rst_in_count       <=  0;
+        ddr3_rst_in             <=  1;
+    end
+    else begin
+        if (ddr3_rst_in_count < 16'hFFFF) begin
+            ddr3_rst_in         <=  1;
+            ddr3_rst_in_count   <=  ddr3_rst_in_count + 1;
+        end
+        else begin
+            ddr3_rst_in     <=  0;
+        end
+    end
 end
 
 endmodule
