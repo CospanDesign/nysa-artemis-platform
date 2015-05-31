@@ -52,6 +52,7 @@ BIT_P2_ENABLE           = 4
 BIT_P3_ENABLE           = 5
 BIT_P4_ENABLE           = 6
 BIT_P5_ENABLE           = 7
+BIT_PLL_LOCKED          = 8
 
 DDR3_STATUS0            = 0000000
 
@@ -149,6 +150,22 @@ class ArtemisDriver(driver.Driver):
             Nothing
         """
         return self.is_register_bit_set(CONTROL, BIT_CALIBRATION_DONE)
+
+    def is_main_pll_locked(self):
+        """
+        Returns True if the main PLL is locked
+
+        Args:
+            Nothing
+
+        Returns (Boolean):
+            True: PLL is Locked
+            False: PLL is not locked
+
+        Raises:
+            Nothing
+        """
+        return self.is_register_bit_set(CONTROL, BIT_PLL_LOCKED)
 
     def is_ddr3_rst(self):
         """
