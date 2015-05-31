@@ -27,13 +27,13 @@ SOFTWARE.
   SDB_VENDOR_ID:0x800000000000C594
 
   Set the Device ID (Hexcidecimal 32-bit Number)
-  SDB_DEVICE_ID:0x800000000000C594
+  SDB_DEVICE_ID:0x00000000
 
   Set the version of the Core XX.XXX.XXX Example: 01.000.000
   SDB_CORE_VERSION:00.000.001
 
   Set the Device Name: 19 UNICODE characters
-  SDB_NAME:wb_nysa_artemis_platform
+  SDB_NAME:artemis_platform
 
   Set the class of the device (16 bits) Set as 0
   SDB_ABI_CLASS:0
@@ -247,6 +247,7 @@ localparam      BIT_P2_ENABLE           = 4;
 localparam      BIT_P3_ENABLE           = 5;
 localparam      BIT_P4_ENABLE           = 6;
 localparam      BIT_P5_ENABLE           = 7;
+localparam      BIT_PLL_LOCKED          = 8;
 
 localparam      DDR3_STATUS0            = 32'h00000001;
 
@@ -400,10 +401,17 @@ wire                    usr_clk;
 reg                     ddr3_rst_in;
 reg             [15:0]  ddr3_rst_in_count;
 
+wire                    startup_rst;
+
 //Submodules
+STARTUP_SPARTAN6 strtup (
+  .GSR                (startup_rst          )
+);
+
 artemis_clkgen clkgen(
   .clk_100mhz         (clk_100mhz           ),
-  .rst                (rst                  ),
+  //.rst                (rst                  ),
+  .rst                (startup_rst          ),
 
   .locked             (pll_locked           ),
 
@@ -982,6 +990,7 @@ always @ (posedge clk) begin
             CONTROL: begin
                 o_wbs_dat                       <= 32'h00;
                 o_wbs_dat[BIT_CALIBRATION_DONE] <= calibration_done;
+                o_wbs_dat[BIT_PLL_LOCKED]       <= pll_locked;
                 o_wbs_dat[BIT_DDR3_RST]         <= ddr3_rst;
                 o_wbs_dat[BIT_P0_ENABLE]        <= 1;
                 o_wbs_dat[BIT_P1_ENABLE]        <= DDR3_RW0_CH;
