@@ -23,7 +23,7 @@ CONFIG VCCAUX = 3.3;
 INST "artemis/artemis_ddr3_cntrl/ddr3_base/memc?_wrapper_inst/mcb_ui_top_inst/mcb_raw_wrapper_inst/gen_term_calib.mcb_soft_calibration_top_inst/mcb_soft_calibration_inst/DONE_SOFTANDHARD_CAL*" TIG;
 
 #FPGA Controls
-NET rst         LOC = A19  | IOSTANDARD = LVCMOS33 ;
+NET board_rst         LOC = A19  | IOSTANDARD = LVCMOS33 ;
 
 #SPI Flash
 NET SPI_CLK     LOC = Y20;
