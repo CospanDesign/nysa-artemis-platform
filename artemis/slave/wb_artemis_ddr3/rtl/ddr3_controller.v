@@ -278,7 +278,7 @@ always @ (posedge clk) begin
             //data                <=  if_read_data;
             //wr_data             <=  if_read_data;
             wr_en               <=  1;
-            if_read_count       <=  if_read_count + 1;
+            if_read_count       <=  if_read_count + 24'h1;
             if_read_strobe      <=  1;
           end
           else begin
@@ -292,7 +292,7 @@ always @ (posedge clk) begin
       WRITE_COMMAND: begin
         if (!cmd_full) begin
           cmd_instr             <=  CMD_WRITE_PC;
-          cmd_bl                <=  if_read_count - 1;
+          cmd_bl                <=  if_read_count - 24'h1;
           cmd_word_addr         <=  local_address;
           cmd_en                <=  1;
 
@@ -316,7 +316,7 @@ always @ (posedge clk) begin
         //Send the read command
         if(!cmd_full) begin
             cmd_instr           <=  CMD_READ_PC;
-            cmd_bl              <=  of_write_size - 1;
+            cmd_bl              <=  of_write_size - 24'h1;
             cmd_en              <=  1;
             cmd_word_addr       <=  local_address;
 
@@ -331,7 +331,7 @@ always @ (posedge clk) begin
           if (rd_en) begin
           //Srobe the data into the PPFIFO
             //rd_en               <=  1;
-            of_write_count      <=  of_write_count + 1;
+            of_write_count      <=  of_write_count + 24'h1;
           end
         end
         else begin

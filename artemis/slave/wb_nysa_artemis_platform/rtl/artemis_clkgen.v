@@ -1,11 +1,9 @@
 module artemis_clkgen (
-  input   clk_100mhz,
+ (* KEEP = "TRUE" *) input   clk,
   input   rst,
 
   output  locked,
-
-  output  clk,
-  output  ddr3_clk
+(* KEEP = "TRUE" *)  output  ddr3_clk
 );
 
 //Local Parameters
@@ -15,20 +13,16 @@ wire        clk_100mhz_buf;
 wire        clk_fbout;
 wire        clk_fbout_buf;
 wire        clk_100mhz_out;
-wire        ddr3_clk_pre;
-wire        ddr3_clk_int;
+//wire        ddr3_clk_pre;
+//wire        ddr3_clk_int;
 
 //Submodules
-IBUFG clk_100mhz_ibuf (
-  .I                    (clk_100mhz           ),
-  .O                    (clk                  )
-);
-
 BUFG  clkfb_buf (
   .I                    (clk_fbout            ),
   .O                    (clk_fbout_buf        )
 );
 
+/*
 BUFG ddr3_clk_obuf     (
   .I                    (ddr3_clk_pre         ),
   .O                    (ddr3_clk_int         )
@@ -49,9 +43,7 @@ ODDR2 #(
 	.R                    (1'b0),
 	.S                    (1'b0)
 );
-
-
-
+*/
 
 PLL_BASE #(
   .BANDWIDTH            ("OPTIMIZED"          ),
@@ -69,8 +61,8 @@ PLL_BASE #(
 ) artemis_clkgen_pll(
 
   .CLKFBOUT             (clk_fbout            ),
-//  .CLKOUT0              (ddr3_clk             ),
-  .CLKOUT0              (ddr3_clk_pre         ),
+  .CLKOUT0              (ddr3_clk             ),
+//  .CLKOUT0              (ddr3_clk_pre         ),
   .CLKOUT1              (                     ),
   .CLKOUT2              (                     ),
   .CLKOUT3              (                     ),
