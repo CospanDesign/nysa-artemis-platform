@@ -8,9 +8,10 @@ NET "artemis/ddr3_rst_in" TIG;
 TIMESPEC "ts_clk" = PERIOD "tnm_clk" 10 ns HIGH 50%;
 
 #NET "artemis/clkgen/clk" TNM_NET = "tn_ddr3_in_clk";
-#NET "artemis/clkgen/ddr3_clk" TNM_NET = "tn_ddr3_out_clk";
+NET "artemis/clkgen/ddr3_clk" TNM_NET = "tnm_ddr3_clk";
+TIMESPEC "ts_ddr3_main_clk" = PERIOD "tnm_ddr3_clk" 3 ns HIGH 50 %;
 
-TIMESPEC "ts_clk_to_ddr3" = FROM "artemis/clkgen/clk" TO "artemis/clkgen/ddr3_clk" TIG;
+#TIMESPEC "ts_clk_to_ddr3" = FROM "tnm_clk" TO "tnm_ddr3_out_clk" TIG;
 
 #DDR3 Clock Loopback
 CONFIG VCCAUX = 3.3;
