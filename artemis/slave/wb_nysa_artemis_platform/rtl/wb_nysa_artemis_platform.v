@@ -66,8 +66,8 @@ SOFTWARE.
 `unconnected_drive pull0
 
 module wb_nysa_artemis_platform #(
-  parameter DDR3_W0_CH  = 0,
-  parameter DDR3_R0_CH  = 0,
+  parameter DDR3_W0_CH  = 1,
+  parameter DDR3_R0_CH  = 1,
   parameter DDR3_W1_CH  = 0,
   parameter DDR3_R1_CH  = 0,
   parameter DDR3_RW0_CH = 0
