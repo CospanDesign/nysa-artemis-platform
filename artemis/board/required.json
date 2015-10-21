@@ -3,6 +3,10 @@
     "rst":{
         "direction":"input",
         "loc":"rst"
+    },
+    "clk":{
+        "direction":"input",
+        "loc":"clk"
     }
   },
   "MEMORY":{
@@ -14,18 +18,6 @@
     "artemis":{
       "filename":"wb_nysa_artemis_platform.v",
       "bind":{
-        "clk_100mhz":{
-          "direction":"input",
-          "loc":"clk_100mhz"
-        },
-          "ddr3_clk_out":{
-          "direction":"output",
-          "loc":"ddr3_clk_out"
-        },
-        "ddr3_clk_in":{
-          "direction":"input",
-          "loc":"ddr3_clk_in"
-        },
         "ddr3_dram_dq[7:0]":{
           "direction":"inout",
           "loc":"ddr3_dram_dq[7:0]"

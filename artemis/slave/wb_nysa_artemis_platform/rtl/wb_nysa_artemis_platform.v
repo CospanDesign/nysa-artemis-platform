@@ -66,13 +66,13 @@ SOFTWARE.
 `unconnected_drive pull0
 
 module wb_nysa_artemis_platform #(
-  parameter DDR3_W0_CH  = 0,
-  parameter DDR3_R0_CH  = 0,
+  parameter DDR3_W0_CH  = 1,
+  parameter DDR3_R0_CH  = 1,
   parameter DDR3_W1_CH  = 0,
   parameter DDR3_R1_CH  = 0,
   parameter DDR3_RW0_CH = 0
 )(
-  output                clk,
+  input                 clk,
   input                 rst,
 
   //Add signals to control your device here
@@ -91,12 +91,11 @@ module wb_nysa_artemis_platform #(
   output  reg           o_wbs_int,
   //output              o_wbs_int
 
-  input                 clk_100mhz,
   output                calibration_done,
   output                ddr3_rst,
 
-  output                ddr3_clk_out,
-  input                 ddr3_clk_in,
+  //output                ddr3_clk_out,
+  //input                 ddr3_clk_in,
 
   inout         [7:0]   ddr3_dram_dq,
   output        [13:0]  ddr3_dram_a,
@@ -401,26 +400,28 @@ wire                    usr_clk;
 reg                     ddr3_rst_in;
 reg             [15:0]  ddr3_rst_in_count;
 
-wire                    startup_rst;
+(* KEEP  = "TRUE" *) wire                    ddr3_clk;
+
+//wire                    startup_rst;
 
 //Submodules
+/*
 STARTUP_SPARTAN6 strtup (
   .GSR                (startup_rst          )
 );
+*/
+
 
 artemis_clkgen clkgen(
-  .clk_100mhz         (clk_100mhz           ),
-  //.rst                (rst                  ),
-  .rst                (startup_rst          ),
-
+  .clk                (clk                  ),
+  .rst                (rst                  ),
   .locked             (pll_locked           ),
 
-  .clk                (clk                  ),
-  .ddr3_clk           (ddr3_clk_out         )
+  .ddr3_clk           (ddr3_clk             )
 );
 
 artemis_ddr3 artemis_ddr3_cntrl(
-  .clk_333mhz         (ddr3_clk_in           ),
+  .clk_333mhz         (ddr3_clk              ),
   //.board_rst          (rst  || !pll_locked   ),
   .board_rst          (ddr3_rst_in           ),
 
@@ -563,6 +564,7 @@ artemis_ddr3 artemis_ddr3_cntrl(
   .p5_rd_error        (p5_rd_error           )
 );
 
+generate
 if (DDR3_W0_CH) begin
   assign  p2_cmd_clk  =   clk;
   assign  p2_wr_clk   =   clk;
@@ -593,6 +595,7 @@ if (DDR3_W0_CH) begin
       .read_addr_dec      (1'b0               ),
       .read_count         (24'b0              ),
       .read_flush         (1'b0               ),
+      .read_busy          (                   ),
 
       .read_activate      (1'b0               ),
       .read_strobe        (1'b0               ),
@@ -639,7 +642,9 @@ else begin
   assign  w0_write_size      = 0;
 
 end
+endgenerate
 
+generate
 if (DDR3_W1_CH) begin
 
   assign  p3_cmd_clk  =   clk;
@@ -671,6 +676,7 @@ if (DDR3_W1_CH) begin
       .read_addr_dec      (1'b0               ),
       .read_count         (24'b0              ),
       .read_flush         (1'b0               ),
+      .read_busy          (                   ),
 
       .read_activate      (1'b0               ),
       .read_strobe        (1'b0               ),
@@ -715,7 +721,9 @@ else begin
   assign  w1_write_ready     = 0;
   assign  w1_write_size      = 0;
 end
+endgenerate
 
+generate
 if (DDR3_R0_CH) begin
   assign  p4_cmd_clk  =   clk;
   assign  p4_rd_clk   =   clk;
@@ -790,7 +798,9 @@ else begin
   assign  r0_read_size        =   0;
   assign  r0_read_data        =   0;
 end
+endgenerate
 
+generate
 if (DDR3_R1_CH) begin
   assign  p5_cmd_clk  =   clk;
   assign  p5_rd_clk   =   clk;
@@ -864,7 +874,9 @@ else begin
   assign  r1_read_size        =   0;
   assign  r1_read_data        =   0;
 end
+endgenerate
 
+generate
 if (DDR3_RW0_CH) begin
   assign  p1_cmd_clk  =   clk;
   assign  p1_wr_clk   =   clk;
@@ -956,6 +968,7 @@ else begin
   assign  rw0_write_size      = 0;
 
 end
+endgenerate
 
 
 //Synchronous Logic
@@ -1069,7 +1082,7 @@ always @ (posedge clk) begin
     else begin
         if (ddr3_rst_in_count < 16'hFFFF) begin
             ddr3_rst_in         <=  1;
-            ddr3_rst_in_count   <=  ddr3_rst_in_count + 1;
+            ddr3_rst_in_count   <=  ddr3_rst_in_count + 16'h0001;
         end
         else begin
             ddr3_rst_in     <=  0;

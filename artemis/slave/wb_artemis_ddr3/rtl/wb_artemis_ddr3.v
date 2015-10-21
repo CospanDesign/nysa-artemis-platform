@@ -275,7 +275,7 @@ always @ (posedge clk) begin
           if (write_count < if_write_fifo_size) begin
             if_write_strobe   <=  1;
             o_wbs_ack         <=  1;
-            write_count       <=  write_count + 1;
+            write_count       <=  write_count + 24'h1;
           end
           else begin
             if_write_activate <=  0;
