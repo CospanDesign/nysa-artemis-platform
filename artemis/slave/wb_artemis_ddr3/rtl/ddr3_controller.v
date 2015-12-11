@@ -238,7 +238,7 @@ always @ (posedge clk) begin
       if_read_activate        <=  1;
     end
     //Get an outgoing FIFO when available
-    if ((of_write_ready > 0) && (of_write_activate == 0)) begin
+    if ((state == READ_READY) && (of_write_ready > 0) && (of_write_activate == 0)) begin
       of_write_count          <=  0;
       if (of_write_ready[0]) begin
         of_write_activate[0]  <=  1;
@@ -274,7 +274,8 @@ always @ (posedge clk) begin
         //Since the maximum amount of data can only be 64 we can only fill up the write FIFO
         //After we sent out all the data o to write command to issue a command to take care of this
         if (if_read_count       < if_read_size) begin
-          if (!wr_full) begin
+          //if (!wr_full) begin
+          if (wr_count < 6'h3F) begin
             //data                <=  if_read_data;
             //wr_data             <=  if_read_data;
             wr_en               <=  1;
@@ -317,15 +318,15 @@ always @ (posedge clk) begin
         if(!cmd_full) begin
             cmd_instr           <=  CMD_READ_PC;
             cmd_bl              <=  of_write_size - 24'h1;
-            cmd_en              <=  1;
             cmd_word_addr       <=  local_address;
+            cmd_en              <=  1;
 
-            local_address       <=  local_address + 28'h040;
+            local_address       <=  local_address + of_write_size;
             state               <=  READ_DATA;
         end
       end
       READ_DATA: begin
-        if ((of_write_activate > 0) && (of_write_count < (of_write_size))) begin
+        if ((of_write_activate > 0) && (of_write_count < of_write_size)) begin
           //if (!rd_empty) begin
           read_request          <=  1;
           if (rd_en) begin

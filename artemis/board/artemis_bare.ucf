@@ -1,0 +1,149 @@
+
+## Clock constraints
+
+NET clk                   LOC = G9 | IOSTANDARD = LVCMOS33 | BUFG=CLK;
+NET "clk_BUFGP"           TNM= "tnm_clk";
+NET "artemis/ddr3_rst_in" TIG;
+#NET clk                   TNM= "tnm_clk";
+TIMESPEC "ts_clk" = PERIOD "tnm_clk" 10 ns HIGH 50%;
+
+#NET "artemis/clkgen/clk" TNM_NET = "tn_ddr3_in_clk";
+NET "artemis/clkgen/ddr3_clk" TNM_NET = "tnm_ddr3_clk";
+TIMESPEC "ts_ddr3_main_clk" = PERIOD "tnm_ddr3_clk" 3 ns HIGH 50 %;
+
+#TIMESPEC "ts_clk_to_ddr3" = FROM "tnm_clk" TO "tnm_ddr3_out_clk" TIG;
+
+#DDR3 Clock Loopback
+CONFIG VCCAUX = 3.3;
+
+#NET "c?_pll_lock" TIG;
+INST "artemis/artemis_ddr3_cntrl/ddr3_base/memc?_wrapper_inst/mcb_ui_top_inst/mcb_raw_wrapper_inst/gen_term_calib.mcb_soft_calibration_top_inst/mcb_soft_calibration_inst/DONE_SOFTANDHARD_CAL*" TIG;
+
+
+#FPGA Controls
+#NET rst         LOC = A19  | IOSTANDARD = LVCMOS33 ;
+#NET board_rst         LOC = A19  | IOSTANDARD = LVCMOS33 | TIG;
+
+#SPI Flash
+NET SPI_CLK     LOC = Y20;
+NET SPI_DO      LOC = AB20;
+NET SPI_DI      LOC = AA20;
+NET SPI_CS      LOC = AA3;
+
+#BOARD LED's
+NET LED<0>     LOC = C5	  | IOSTANDARD  = LVCMOS33  | SLEW = SLOW | DRIVE  = 4;
+NET LED<1>     LOC = E5   | IOSTANDARD  = LVCMOS33  | SLEW = SLOW | DRIVE  = 4;
+
+#Button
+NET BUTTON<0>  LOC = D5   | IOSTANDARD = LVCMOS33 ;
+NET BUTTON<1>  LOC = D4   | IOSTANDARD = LVCMOS33 ;
+
+#PMODA
+#NET PMODA1     LOC = E6   | IOSTANDARD = LVCMOS33 ;
+#NET PMODA2     LOC = H12  | IOSTANDARD = LVCMOS33 ;
+#NET PMODA3     LOC = F15  | IOSTANDARD = LVCMOS33 ;
+#NET PMODA4     LOC = E16  | IOSTANDARD = LVCMOS33 ;
+#NET PMODA7     LOC = B18  | IOSTANDARD = LVCMOS33 ;
+#NET PMODA8     LOC = A17  | IOSTANDARD = LVCMOS33 ;
+#NET PMODA9     LOC = D18  | IOSTANDARD = LVCMOS33 ;
+#NET PMODA10    LOC = C17  | IOSTANDARD = LVCMOS33 ;
+
+#PMODB
+#NET PMODB1     LOC = C4   | IOSTANDARD = LVCMOS33 ;
+#NET PMODB2     LOC = A2   | IOSTANDARD = LVCMOS33 ;
+#NET PMODB3     LOC = A3   | IOSTANDARD = LVCMOS33 ;
+#NET PMODB4     LOC = A4   | IOSTANDARD = LVCMOS33 ;
+#NET PMODB7     LOC = D3   | IOSTANDARD = LVCMOS33 ;
+#NET PMODB8     LOC = B2   | IOSTANDARD = LVCMOS33 ;
+#NET PMODB9     LOC = B3   | IOSTANDARD = LVCMOS33 ;
+#NET PMODB10    LOC = A5   | IOSTANDARD = LVCMOS33 ;
+
+#HEADER
+#NET S0         LOC = F7   | IOSTANDARD = LVCMOS33 ;
+#NET S1         LOC = F8   | IOSTANDARD = LVCMOS33 ;
+#NET S2         LOC = G8   | IOSTANDARD = LVCMOS33 ;
+#NET S3         LOC = F10  | IOSTANDARD = LVCMOS33 ;
+#NET S4         LOC = H10  | IOSTANDARD = LVCMOS33 ;
+#NET S5         LOC = G11  | IOSTANDARD = LVCMOS33 ;
+#NET S6         LOC = H11  | IOSTANDARD = LVCMOS33 ;
+#NET S7         LOC = H13  | IOSTANDARD = LVCMOS33 ;
+#NET S8         LOC = F14  | IOSTANDARD = LVCMOS33 ;
+#NET S9         LOC = H14  | IOSTANDARD = LVCMOS33 ;
+#NET S10        LOC = G15  | IOSTANDARD = LVCMOS33 ;
+#NET S11        LOC = F16  | IOSTANDARD = LVCMOS33 ;
+#NET S12        LOC = G16  | IOSTANDARD = LVCMOS33 ;
+#NET S13        LOC = F17  | IOSTANDARD = LVCMOS33 ;
+#NET S14        LOC = A18  | IOSTANDARD = LVCMOS33 ;
+#NET S15        LOC = C18  | IOSTANDARD = LVCMOS33 ;
+#NET S16        LOC = C19  | IOSTANDARD = LVCMOS33 ;
+#NET S17        LOC = D19  | IOSTANDARD = LVCMOS33 ;
+#NET S18        LOC = A20  | IOSTANDARD = LVCMOS33 ;
+#NET S19        LOC = B20  | IOSTANDARD = LVCMOS33 ;
+
+# Termination
+NET "ddr3_dram_dq[*]"    IN_TERM = NONE;
+NET "ddr3_dram_dqs"      IN_TERM = NONE;
+NET "ddr3_dram_dqs_n"    IN_TERM = NONE;
+
+# I/O STANDARDS
+NET  "ddr3_dram_dq[*]"   IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_a[*]"    IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_ba[*]"   IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_dqs"     IOSTANDARD = DIFF_SSTL15_II | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_dqs_n"   IOSTANDARD = DIFF_SSTL15_II | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_ck"      IOSTANDARD = DIFF_SSTL15_II | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_ck_n"    IOSTANDARD = DIFF_SSTL15_II | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_cke"     IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_ras_n"   IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_cas_n"   IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_we_n"    IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_odt"     IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_dram_reset_n" IOSTANDARD = LVCMOS15  ;
+NET  "ddr3_dram_dm"      IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_rzq"          IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_rzq"          TIG;
+NET  "ddr3_zio"          IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
+NET  "ddr3_zio"          TIG;
+
+# Pin Location Constraints for Clock, Masks, Address, and Controls
+
+NET  "ddr3_dram_a[0]"    LOC = K2 ; #K2
+NET  "ddr3_dram_a[10]"   LOC = J4 ; #J4
+NET  "ddr3_dram_a[11]"   LOC = E1 ;
+NET  "ddr3_dram_a[12]"   LOC = F1 ;
+NET  "ddr3_dram_a[13]"   LOC = J6 ;
+NET  "ddr3_dram_a[1]"    LOC = K1 ;
+NET  "ddr3_dram_a[2]"    LOC = K5 ;
+NET  "ddr3_dram_a[3]"    LOC = M6 ;
+NET  "ddr3_dram_a[4]"    LOC = H3 ;
+NET  "ddr3_dram_a[5]"    LOC = M3 ;
+NET  "ddr3_dram_a[6]"    LOC = L4 ;
+NET  "ddr3_dram_a[7]"    LOC = K6 ;
+NET  "ddr3_dram_a[8]"    LOC = G3 ;
+NET  "ddr3_dram_a[9]"    LOC = G1 ;
+NET  "ddr3_dram_ba[0]"   LOC = J3 ;
+NET  "ddr3_dram_ba[1]"   LOC = J1 ;
+NET  "ddr3_dram_ba[2]"   LOC = H1 ;
+NET  "ddr3_dram_cas_n"   LOC = M4 ;
+NET  "ddr3_dram_ck"      LOC = K4 ;
+NET  "ddr3_dram_ck_n"    LOC = K3 ;
+NET  "ddr3_dram_cke"     LOC = F2 ;
+NET  "ddr3_dram_dm"      LOC = N4 ;
+NET  "ddr3_dram_dq[0]"   LOC = R3 ;
+NET  "ddr3_dram_dq[1]"   LOC = R1 ;
+NET  "ddr3_dram_dq[2]"   LOC = P2 ;
+NET  "ddr3_dram_dq[3]"   LOC = P1 ;
+NET  "ddr3_dram_dq[4]"   LOC = L3 ;
+NET  "ddr3_dram_dq[5]"   LOC = L1 ;
+NET  "ddr3_dram_dq[6]"   LOC = M2 ;
+NET  "ddr3_dram_dq[7]"   LOC = M1 ;
+NET  "ddr3_dram_dqs"     LOC = N3 ;
+NET  "ddr3_dram_dqs_n"   LOC = N1 ;
+NET  "ddr3_dram_odt"     LOC = L6 ;
+NET  "ddr3_dram_ras_n"   LOC = M5 ;
+NET  "ddr3_dram_reset_n" LOC = E3 ;
+NET  "ddr3_dram_we_n"    LOC = H2 ;
+
+NET  "ddr3_rzq"          LOC = R7 ;
+NET  "ddr3_zio"          LOC = W4 ;
+

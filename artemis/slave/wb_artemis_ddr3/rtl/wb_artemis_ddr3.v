@@ -204,7 +204,6 @@ always @ (posedge clk) begin
     o_wbs_ack                 <= 0;
     o_wbs_int                 <= 0;
 
-
     write_en                  <= 0;
     read_en                   <= 0;
 
@@ -262,6 +261,7 @@ always @ (posedge clk) begin
       if_write_activate       <=  0;
       of_read_activate        <=  0;
     end
+
     if ((if_write_activate > 0) && (write_count > 0)&& (if_write_ready > 0)) begin
       //Other side is idle, give it something to do
       if_write_activate       <= 0;
@@ -286,6 +286,7 @@ always @ (posedge clk) begin
         //read request
         if (of_read_activate) begin
           if (read_count < of_read_size) begin
+            read_count        <=  read_count + 1;
             o_wbs_dat         <=  of_read_data;
             o_wbs_ack         <=  1;
             of_read_strobe    <=  1;
