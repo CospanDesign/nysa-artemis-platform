@@ -1,28 +1,29 @@
 
 ## Clock constraints
 
-NET clk                   LOC = G9 | IOSTANDARD = LVCMOS33 | BUFG=CLK;
-NET "clk_BUFGP"           TNM= "tnm_clk";
-NET "artemis/ddr3_rst_in" TIG;
-#NET clk                   TNM= "tnm_clk";
+#NET "clk_100mhz"     LOC = G9;
+#TIMESPEC "ts_100mhz_clk" = PERIOD "clk_100mhz" 10 ns HIGH 50%;
+NET clk_100mhz     LOC = G9 | IOSTANDARD = LVCMOS33;
+NET clk     TNM= "tnm_clk";
 TIMESPEC "ts_clk" = PERIOD "tnm_clk" 10 ns HIGH 50%;
 
-#NET "artemis/clkgen/clk" TNM_NET = "tn_ddr3_in_clk";
-NET "artemis/clkgen/ddr3_clk" TNM_NET = "tnm_ddr3_clk";
-TIMESPEC "ts_ddr3_main_clk" = PERIOD "tnm_ddr3_clk" 3 ns HIGH 50 %;
+NET ddr3_clk_in   LOC = P3 | IOSTANDARD = LVCMOS15;
+NET ddr3_clk_in   TNM="tnm_ddr3_clk_in";
+TIMESPEC ts_ddr3_clk_in = PERIOD "tnm_ddr3_clk_in" 3 ns HIGH 50%;
 
-#TIMESPEC "ts_clk_to_ddr3" = FROM "tnm_clk" TO "tnm_ddr3_out_clk" TIG;
+NET ddr3_clk_out  LOC = P4 | IOSTANDARD = LVCMOS15;
+NET ddr3_clk_out   TNM="tnm_ddr3_clk_out";
+TIMESPEC ts_ddr3_clk_out = PERIOD "tnm_ddr3_clk_out" 3 ns HIGH 50%;
 
 #DDR3 Clock Loopback
+
 CONFIG VCCAUX = 3.3;
 
 #NET "c?_pll_lock" TIG;
 INST "artemis/artemis_ddr3_cntrl/ddr3_base/memc?_wrapper_inst/mcb_ui_top_inst/mcb_raw_wrapper_inst/gen_term_calib.mcb_soft_calibration_top_inst/mcb_soft_calibration_inst/DONE_SOFTANDHARD_CAL*" TIG;
 
-
 #FPGA Controls
-#NET rst         LOC = A19  | IOSTANDARD = LVCMOS33 ;
-#NET board_rst         LOC = A19  | IOSTANDARD = LVCMOS33 | TIG;
+NET board_rst         LOC = A19  | IOSTANDARD = LVCMOS33 ;
 
 #SPI Flash
 NET SPI_CLK     LOC = Y20;
@@ -37,48 +38,6 @@ NET LED<1>     LOC = E5   | IOSTANDARD  = LVCMOS33  | SLEW = SLOW | DRIVE  = 4;
 #Button
 NET BUTTON<0>  LOC = D5   | IOSTANDARD = LVCMOS33 ;
 NET BUTTON<1>  LOC = D4   | IOSTANDARD = LVCMOS33 ;
-
-#PMODA
-#NET PMODA1     LOC = E6   | IOSTANDARD = LVCMOS33 ;
-#NET PMODA2     LOC = H12  | IOSTANDARD = LVCMOS33 ;
-#NET PMODA3     LOC = F15  | IOSTANDARD = LVCMOS33 ;
-#NET PMODA4     LOC = E16  | IOSTANDARD = LVCMOS33 ;
-#NET PMODA7     LOC = B18  | IOSTANDARD = LVCMOS33 ;
-#NET PMODA8     LOC = A17  | IOSTANDARD = LVCMOS33 ;
-#NET PMODA9     LOC = D18  | IOSTANDARD = LVCMOS33 ;
-#NET PMODA10    LOC = C17  | IOSTANDARD = LVCMOS33 ;
-
-#PMODB
-#NET PMODB1     LOC = C4   | IOSTANDARD = LVCMOS33 ;
-#NET PMODB2     LOC = A2   | IOSTANDARD = LVCMOS33 ;
-#NET PMODB3     LOC = A3   | IOSTANDARD = LVCMOS33 ;
-#NET PMODB4     LOC = A4   | IOSTANDARD = LVCMOS33 ;
-#NET PMODB7     LOC = D3   | IOSTANDARD = LVCMOS33 ;
-#NET PMODB8     LOC = B2   | IOSTANDARD = LVCMOS33 ;
-#NET PMODB9     LOC = B3   | IOSTANDARD = LVCMOS33 ;
-#NET PMODB10    LOC = A5   | IOSTANDARD = LVCMOS33 ;
-
-#HEADER
-#NET S0         LOC = F7   | IOSTANDARD = LVCMOS33 ;
-#NET S1         LOC = F8   | IOSTANDARD = LVCMOS33 ;
-#NET S2         LOC = G8   | IOSTANDARD = LVCMOS33 ;
-#NET S3         LOC = F10  | IOSTANDARD = LVCMOS33 ;
-#NET S4         LOC = H10  | IOSTANDARD = LVCMOS33 ;
-#NET S5         LOC = G11  | IOSTANDARD = LVCMOS33 ;
-#NET S6         LOC = H11  | IOSTANDARD = LVCMOS33 ;
-#NET S7         LOC = H13  | IOSTANDARD = LVCMOS33 ;
-#NET S8         LOC = F14  | IOSTANDARD = LVCMOS33 ;
-#NET S9         LOC = H14  | IOSTANDARD = LVCMOS33 ;
-#NET S10        LOC = G15  | IOSTANDARD = LVCMOS33 ;
-#NET S11        LOC = F16  | IOSTANDARD = LVCMOS33 ;
-#NET S12        LOC = G16  | IOSTANDARD = LVCMOS33 ;
-#NET S13        LOC = F17  | IOSTANDARD = LVCMOS33 ;
-#NET S14        LOC = A18  | IOSTANDARD = LVCMOS33 ;
-#NET S15        LOC = C18  | IOSTANDARD = LVCMOS33 ;
-#NET S16        LOC = C19  | IOSTANDARD = LVCMOS33 ;
-#NET S17        LOC = D19  | IOSTANDARD = LVCMOS33 ;
-#NET S18        LOC = A20  | IOSTANDARD = LVCMOS33 ;
-#NET S19        LOC = B20  | IOSTANDARD = LVCMOS33 ;
 
 # Termination
 NET "ddr3_dram_dq[*]"    IN_TERM = NONE;
@@ -101,9 +60,7 @@ NET  "ddr3_dram_odt"     IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
 NET  "ddr3_dram_reset_n" IOSTANDARD = LVCMOS15  ;
 NET  "ddr3_dram_dm"      IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
 NET  "ddr3_rzq"          IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
-NET  "ddr3_rzq"          TIG;
 NET  "ddr3_zio"          IOSTANDARD = SSTL15_II      | OUT_TERM = UNTUNED_50;
-NET  "ddr3_zio"          TIG;
 
 # Pin Location Constraints for Clock, Masks, Address, and Controls
 
