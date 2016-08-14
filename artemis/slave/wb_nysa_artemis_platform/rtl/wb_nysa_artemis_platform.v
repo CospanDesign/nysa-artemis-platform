@@ -739,7 +739,7 @@ if (DDR3_R0_CH) begin
       .write_addr_dec     (1'b0               ),
       .write_count        (24'b0              ),
 
-      .write_activate     (1'b0               ),
+      .write_activate     (2'b0               ),
       .write_strobe       (1'b0               ),
       .write_data         (32'b0              ),
 

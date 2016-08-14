@@ -21,14 +21,14 @@ INST "artemis/artemis_ddr3_cntrl/ddr3_base/memc?_wrapper_inst/mcb_ui_top_inst/mc
 
 
 #FPGA Controls
-#NET rst         LOC = A19  | IOSTANDARD = LVCMOS33 ;
-#NET board_rst         LOC = A19  | IOSTANDARD = LVCMOS33 | TIG;
+NET rst        LOC = A19  | IOSTANDARD = LVCMOS33 ;
+#NET board_rst        LOC = A19  | IOSTANDARD = LVCMOS33 | TIG;
 
 #SPI Flash
-NET SPI_CLK     LOC = Y20;
-NET SPI_DO      LOC = AB20;
-NET SPI_DI      LOC = AA20;
-NET SPI_CS      LOC = AA3;
+NET SPI_CLK    LOC = Y20;
+NET SPI_DO     LOC = AB20;
+NET SPI_DI     LOC = AA20;
+NET SPI_CS     LOC = AA3;
 
 #BOARD LED's
 NET LED<0>     LOC = C5	  | IOSTANDARD  = LVCMOS33  | SLEW = SLOW | DRIVE  = 4;
