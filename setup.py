@@ -24,6 +24,7 @@ setup(
     packages=find_packages('.'),
     url="http://artemis.cospandesign.com",
     package_data={'' : ["*.json", "*.png", "*.ucf"]},
+    dependency_links = ["https://github.com/CospanDesign/nysa/tarball/master#egg=nysa"],
     install_requires = [
         "nysa"
     ],
